@@ -5,8 +5,7 @@ st.header(f"{STR_MENU_TRAIN} 📚")
 
 def main():
     cfg_data = db_query_config()
-    # st.write(cfg_data)
-
+    
     vn = setup_vanna(cfg_data)
 
 

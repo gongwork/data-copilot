@@ -7,7 +7,10 @@ from vanna.openai import OpenAI_Chat
 from vanna.anthropic import Anthropic_Chat
 from vanna.chromadb.chromadb_vector import ChromaDB_VectorStore
 
-from api_key_store import ApiKeyStore
+# from api_key_store import ApiKeyStore
+import os
+from dotenv import load_dotenv  # type: ignore
+load_dotenv()
 
 LLM_MODEL_MAP = {
     "OpenAI GPT 4": 'gpt-4',
@@ -39,14 +42,17 @@ def lookup_llm_api_key(llm_model, llm_vendor):
         return "OLLAMA"
 
     vendor = model_spec.split()[0].upper()
-    aks = ApiKeyStore()
+    # aks = ApiKeyStore()
 
     if vendor == "GOOGLE":
-        return aks.get_api_key(provider="GOOGLE/VERTEX_AI")
+        # return aks.get_api_key(provider="GOOGLE/VERTEX_AI")
+        return os.getenv("GOOGLE_API_KEY")
     elif vendor == "ANTHROPIC":
-        return aks.get_api_key(provider="ANTHROPIC")
+        # return aks.get_api_key(provider="ANTHROPIC")
+        return os.getenv("ANTHROPIC_API_KEY")
     elif vendor == "OPENAI":
-        return aks.get_api_key(provider="OPENAI")
+        # return aks.get_api_key(provider="OPENAI")
+        return os.getenv("OPENAI_API_KEY")
     else:
         st.error(f"Unknown LLM vendor: {vendor} | {llm_vendor}")
         return None
@@ -78,6 +84,7 @@ def setup_vanna(_cfg_data):
 
     llm_vendor = _cfg_data.get("llm_vendor")
     llm_model = _cfg_data.get("llm_model")
+    # print(f"llm_model = {llm_model}")
     llm_api_key = lookup_llm_api_key(llm_model, llm_vendor)
     vector_db = _cfg_data.get("vector_db")
     db_type = _cfg_data.get("db_type")
@@ -137,9 +144,12 @@ def generate_followup_cached(_cfg_data, question, sql, df):
 # @st.cache_data(show_spinner="Generating SQL query ...")
 def generate_sql_cached(_cfg_data, question: str):
     vn = setup_vanna(_cfg_data)
-    raw_sql = vn.generate_sql(question=question, allow_llm_to_see_data=True)
-    if raw_sql.strip()[-1] != ";":
-        raw_sql += ";"
+    question_hint = f"""
+        Hint: When generating an SQL query, you must terminate the SQL query with an semicolon!
+
+        {question}
+    """
+    raw_sql = vn.generate_sql(question=question_hint, allow_llm_to_see_data=True)
     my_sql = vn.extract_sql(raw_sql)
     return my_sql
 

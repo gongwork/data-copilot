@@ -1,6 +1,6 @@
 100_sync_git_push.sh
 **/*.bin
-
+.env
 
 
 # Byte-compiled / optimized / DLL files

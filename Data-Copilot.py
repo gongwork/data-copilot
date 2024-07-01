@@ -6,6 +6,12 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+from dotenv import load_dotenv  # type: ignore
+load_dotenv()
+
+x = os.getenv("GOOGLE_MODEL")
+st.info(f"x = {x}")
+
 ## Welcome page
 st.markdown(f"""
 ### <span style="color: red;">Self-Service Analytics</span>
