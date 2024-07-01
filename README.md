@@ -3,6 +3,9 @@
 An streamlit app built for data professionals, powered by [vanna.ai](https://github.com/vanna-ai).
 
 ## Setup
+
+prepare `.env` file (see `.env.example`) by setting API_KEY for the LLM providor of choice.
+
 ```
 conda create -n data_copilot python=3.11
 conda activate data_copilot
@@ -12,3 +15,7 @@ streamlit run Data-Copilot.py
 ```
 
 open browser at URL: http://localhost:8501
+
+## Demo Video
+
+[Data Copilot for Self-Service Analytics](https://www.youtube.com/watch?v=RKSlUAFmbaM)
