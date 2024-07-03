@@ -14,7 +14,13 @@ st.markdown(f"""
 - [Ollama](https://ollama.com/)
 - [SQLite](https://www.sqlite.org/)
 - [SQL Assistant](https://medium.com/@romina.elena.mendez/sql-assistant-text-to-sql-application-in-streamlit-b54f65d06b97)
-- [Emoji Cheatsheet](https://www.webfx.com/tools/emoji-cheat-sheet/)
+- Emoji
+     - [Wikipedia - Emoji](https://en.wikipedia.org/wiki/Emoji)
+     - [Unicode Emoji](https://unicode.org/emoji/charts/full-emoji-list.html)
+     - [Emoji Cheatsheet](https://www.webfx.com/tools/emoji-cheat-sheet/)
+     - [Emojipedia](https://emojipedia.org/)
+     - [GetEmoji](https://getemoji.com/)
+     - [EmojiHub](https://emojihub.org/)
 """, unsafe_allow_html=True)
 
 st.image("./docs/thank-you.png")
