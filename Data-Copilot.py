@@ -9,8 +9,8 @@ st.set_page_config(
 from dotenv import load_dotenv  # type: ignore
 load_dotenv()
 
-x = os.getenv("GOOGLE_MODEL")
-st.info(f"x = {x}")
+# x = os.getenv("GOOGLE_MODEL")
+# st.info(f"x = {x}")
 
 ## Welcome page
 st.markdown(f"""

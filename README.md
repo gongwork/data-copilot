@@ -25,3 +25,9 @@ open browser at URL: http://localhost:8501
 
 ### quick start
 https://github.com/build-on-aws/amazon-bedrock-quick-start
+
+
+## Changes
+
+### Vanna upgrade
+- [2024-07-21] from `0.6.2` to `0.6.3` to support AWS Bedrock
