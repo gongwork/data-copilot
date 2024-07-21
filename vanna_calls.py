@@ -28,6 +28,10 @@ LLM_MODEL_MAP = {
     "Mistral (Open)": 'mistral',
 }
 
+def parse_llm_model_spec(model_name):
+    llm_vendor = model_name.split()[0]
+    llm_model = LLM_MODEL_MAP.get(model_name)
+    return llm_vendor, llm_model
 
 def lookup_llm_api_key(llm_model, llm_vendor):
     """

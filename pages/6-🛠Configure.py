@@ -1,6 +1,8 @@
 from utils import *
 
-from vanna_calls import LLM_MODEL_MAP
+from vanna_calls import (
+    LLM_MODEL_MAP, parse_llm_model_spec
+)
 
 st.set_page_config(layout="wide")
 st.header(f"{STR_MENU_CONFIG} 🛠")
@@ -12,11 +14,6 @@ TABLE_NAME = CFG["TABLE_CONFIG"]
 KEY_PREFIX = f"col_{TABLE_NAME}"
 
 llm_model_list = list(LLM_MODEL_MAP.keys())
-
-def parse_llm_model_spec(model_name):
-    llm_vendor = model_name.split()[0]
-    llm_model = LLM_MODEL_MAP.get(model_name)
-    return llm_vendor, llm_model
 
 def db_upsert_cfg(data):
     llm_vendor=data.get("llm_vendor")
@@ -140,7 +137,7 @@ def main():
         model_selected = st.radio(
             "GenAI model name",
             options=llm_model_list,
-            index=llm_model_list.index("Anthropic Claude 3.5 Sonnet"),
+            index=llm_model_list.index("AWS Bedrock Claude 3.0 Sonnet"),
         )
 
         llm_vendor, llm_model = parse_llm_model_spec(model_selected)
