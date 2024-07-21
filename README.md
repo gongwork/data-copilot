@@ -19,3 +19,9 @@ open browser at URL: http://localhost:8501
 ## Demo Video
 
 [Data Copilot for Self-Service Analytics](https://www.youtube.com/watch?v=RKSlUAFmbaM)
+
+
+## AWS Bedrock
+
+### quick start
+https://github.com/build-on-aws/amazon-bedrock-quick-start
