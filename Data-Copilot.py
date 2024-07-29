@@ -30,3 +30,12 @@ By streamlining the data-to-insight life-cycle, **<span style="color: red;">Data
 st.image("./docs/data-copilot.drawio.png")
 
 
+st.markdown(f"""
+#### <span style="color: blue;">Demo Video</span>
+https://www.youtube.com/watch?v=RKSlUAFmbaM
+            
+#### <span style="color: blue;">GitHub Repo </span>
+https://github.com/gongwork/data-copilot
+""", unsafe_allow_html=True)
+
+
