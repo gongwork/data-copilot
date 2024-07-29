@@ -256,7 +256,7 @@ def db_select_by_id(table_name, id_value=""):
         sql_stmt = f"""
             select *
             from {table_name} 
-            where u_id = '{id_value}' ;
+            where id = '{id_value}' ;
         """
         return pd.read_sql(sql_stmt, _conn).fillna("").to_dict('records')
 
@@ -272,6 +272,7 @@ def trim_str_col_val(data):
 def db_upsert(data, user_key_cols="title", call_meta_func=False):
     """ 
     """
+    # print(f"data = {data}")
     if not data: 
         return None
 
@@ -290,17 +291,17 @@ def db_upsert(data, user_key_cols="title", call_meta_func=False):
     data = trim_str_col_val(data)
 
     sql_type = "INSERT"
-    u_id = data.get(user_key_cols, "")
-    if not u_id:
+    uk_val = data.get(user_key_cols, "")
+    if not uk_val:
         id = ""
         sql_type = "INSERT"
     else:
         with DBConn() as _conn:
-            u_id = escape_single_quote(u_id)
+            uk_val = escape_single_quote(uk_val)
             sql_stmt = f"""
                 select *
                 from {table_name} 
-                where {user_key_cols} = '{u_id}';
+                where {user_key_cols} = '{uk_val}';
             """
             rows = pd.read_sql(sql_stmt, _conn).to_dict('records')
 
@@ -369,6 +370,7 @@ def db_upsert(data, user_key_cols="title", call_meta_func=False):
             """
 
     if upsert_sql:
+        # print(f"upsert_sql = {upsert_sql}")
         try:
             db_execute(upsert_sql, 
                     debug=CFG["DEBUG_FLAG"], 
@@ -405,13 +407,13 @@ def db_delete_by_id(data):
     if not table_name:
         raise Exception(f"[ERROR] Missing table_name: {data}")
 
-    id_val = data.get("u_id", "")
+    id_val = data.get("id", "")
     if not id_val:
         return None
     
     delete_sql = f"""
         delete from {table_name}
-        where u_id = '{id_val}';
+        where id = '{id_val}';
     """
     db_execute(delete_sql, 
                 debug=CFG["DEBUG_FLAG"], 
@@ -426,7 +428,7 @@ def db_update_by_id(data, update_changed=True):
     if not table_name:
         raise Exception(f"[ERROR] Missing table_name: {data}")
 
-    id_val = data.get("u_id", "")
+    id_val = data.get("id", "")
     if not id_val:
         return
 
@@ -457,7 +459,7 @@ def db_update_by_id(data, update_changed=True):
         update_sql = f"""
             update {table_name}
             set {', '.join(set_clause)}
-            where u_id = '{id_val}';
+            where id = '{id_val}';
         """
         db_execute(update_sql, 
                     debug=CFG["DEBUG_FLAG"], 
@@ -536,7 +538,6 @@ AGGRID_OPTIONS = {
     "return_mode_value": DataReturnMode.__members__["FILTERED"],
     "update_mode_value": GridUpdateMode.__members__["MODEL_CHANGED"],
     "fit_columns_on_grid_load": True,
-    "min_column_width": 4,
     "selection_mode": "single",  #  "multiple",  # 
     "allow_unsafe_jscode": True,
     "groupSelectsChildren": True,
@@ -829,9 +830,9 @@ def ui_layout_form(selected_row, table_name):
     data = {"table_name": table_name}
 
     # copy id if present
-    id_val = old_row.get("u_id", "")
+    id_val = old_row.get("id", "")
     if id_val:
-        data.update({"u_id" : id_val})
+        data.update({"id" : id_val})
 
     # display form and populate data dict
     col_col = {}
@@ -923,10 +924,10 @@ def ui_layout_form(selected_row, table_name):
             try:
                 delete_flag = data.get("delelte_record", False)
                 if delete_flag:
-                    if data.get("u_id"):
+                    if data.get("id"):
                         db_delete_by_id(data)
                 else:
-                    if data.get("u_id"):
+                    if data.get("id"):
                         data.update({"ts": get_ts_now(),
                                     })
                         db_update_by_id(data)
@@ -950,7 +951,6 @@ def ui_layout_form(selected_row, table_name):
 def ui_display_df_grid(df, 
         selection_mode="single",  # "multiple", 
         fit_columns_on_grid_load=AGGRID_OPTIONS["fit_columns_on_grid_load"],
-        min_column_width=AGGRID_OPTIONS["min_column_width"],
         page_size=AGGRID_OPTIONS["paginationPageSize"],
         grid_height=AGGRID_OPTIONS["grid_height"],
         clickable_columns=[],
@@ -960,7 +960,7 @@ def ui_display_df_grid(df,
     """show input df in a grid and return selected row
     """
 
-    gb = GridOptionsBuilder.from_dataframe(df, min_column_width=min_column_width)
+    gb = GridOptionsBuilder.from_dataframe(df)
     gb.configure_selection(selection_mode,
             use_checkbox=True,
             groupSelectsChildren=AGGRID_OPTIONS["groupSelectsChildren"], 
