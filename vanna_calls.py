@@ -21,11 +21,18 @@ LLM_MODEL_MAP = {
     # https://docs.anthropic.com/en/api/claude-on-amazon-bedrock
     # latest: 'claude-3-5-sonnet-20240620-v1:0'
     "AWS Bedrock Claude 3.0 Sonnet": 'claude-3-sonnet-20240229-v1:0', 
+    "DeepSeek Coder v2 (Open)": 'deepseek-coder-v2:latest',
+    "DeepSeek Coder (Open)": 'deepseek-llm:latest',
+    "Alibaba QWen 2:7b (Open)": 'qwen2:7b',
+    "Meta Llama 3.1 (Open)": 'llama3.1',
     "Meta Llama 3 (Open)": 'llama3',
-    "Alibaba QWen 2 (Open)": 'qwen2',
+    "Microsoft Phi 3 (Open)": 'phi3',
+    "Microsoft Phi 3:14b (Open)": 'phi3:14b',
+    "Google Gemma2 (Open)": 'gemma2:latest',
+    "Google Gemma2:2b (Open)": 'gemma2:2b',
     "Google CodeGemma (Open)": 'codegemma',
-    "Google Gemma (Open)": 'gemma',
     "Mistral (Open)": 'mistral',
+    "Mistral Nemo(Open)": 'mistral-nemo',
 }
 
 def parse_llm_model_spec(model_name):

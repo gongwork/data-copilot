@@ -86,6 +86,7 @@ def get_data():
             select 
                 *
             from {TABLE_NAME}
+            order by ts desc
             limit 5
             ;
         """
@@ -98,7 +99,8 @@ def main():
     ##### Data Base
 
     """, unsafe_allow_html=True)
-
+    avail_dbs = included_datasets()
+    st.write(avail_dbs)
     with st.expander("Specify data source:", expanded=True):
         db_list = ["BigQuery","DuckDB","MSSQL","MySQL","Oracle","Postgres","SnowFlake","SQLite"]
         c1, c2 = st.columns([2,6])
@@ -137,9 +139,9 @@ def main():
         model_selected = st.radio(
             "GenAI model name",
             options=llm_model_list,
-            index=llm_model_list.index("AWS Bedrock Claude 3.0 Sonnet"),
+            index=llm_model_list.index("Alibaba QWen 2:7b (Open)"),
         )
-
+        st.write(f"selected model: {model_selected}")
         llm_vendor, llm_model = parse_llm_model_spec(model_selected)
 
     cfg_data = dict(

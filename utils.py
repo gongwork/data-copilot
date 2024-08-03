@@ -11,6 +11,7 @@ from datetime import datetime
 from io import StringIO 
 import os
 import re
+import glob
 from traceback import format_exc
 from pathlib import Path
 from uuid import uuid4
@@ -378,6 +379,10 @@ def db_upsert(data, user_key_cols="title", call_meta_func=False):
                 )
         except Exception as ex:
             print(f"[ERROR] db_upsert():\n\t{str(ex)}")
+
+
+def included_datasets():
+    return [i for i in glob.glob("db/*.sqlite3") if "data_copilot" not in i]
 
 def db_query_config():
     with DBConn(CFG["DB_META_DATA"]) as _conn:

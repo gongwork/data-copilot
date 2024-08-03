@@ -37,17 +37,25 @@ def do_sidebar():
 
         # st.button("Reset", on_click=lambda: reset_my_state(), use_container_width=True)
 
+        st.markdown(f"""
+        #### Example prompts for Movie dataset
+        see [kaggle IMDB notebook](https://www.kaggle.com/code/priy998/imdb-sqlite/notebook)
+        - What are the tables in the movie database
+        - what are the top 5 movies with highest budget? use bar chart to visualize data
 
-        st.title("Example prompts:")
-        st.write("""        
+        """, unsafe_allow_html=True)  
+
+        st.markdown(f"""
+        #### Example prompts for Chinook dataset
         - List all the tables
         - What tables store order information?
         - Find top 5 customers by sales
         - List all customers from Canada and their email addresses
         - Find the top 5 most expensive tracks (based on unit price)
         - Identify artists who have albums with tracks appearing in multiple genres (Hint: join artists and albums tables on ArtistId column)
-        """)
+        """, unsafe_allow_html=True)  
 
+ 
 def db_insert_qa_result(qa_data):
     """Insert Q&A results to DB 
     """
