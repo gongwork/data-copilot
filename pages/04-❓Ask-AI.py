@@ -42,11 +42,16 @@ def do_sidebar():
         see [kaggle IMDB notebook](https://www.kaggle.com/code/priy998/imdb-sqlite/notebook)
         - What are the tables in the movie database
         - what are the top 5 movies with highest budget? use bar chart to visualize data
-
+        - how many movies are there
+        - how many directors are there
+        - Find these 3 directors: James Cameron ; Luc Besson ; John Woo
+        - Find all directors with name starting with Steven
+        - What movies have Steven Spielberg directed, please list them alphabetically
         """, unsafe_allow_html=True)  
 
         st.markdown(f"""
         #### Example prompts for Chinook dataset
+        see [text-to-SQL questions](https://github.com/wgong/py4kids/blob/master/lesson-18-ai/vanna/note_book/gongai/test-2/ollama-llama3-chromadb-sqlite-test-2.ipynb)
         - List all the tables
         - What tables store order information?
         - Find top 5 customers by sales

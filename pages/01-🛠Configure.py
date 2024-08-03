@@ -1,7 +1,7 @@
 from utils import *
 
 from vanna_calls import (
-    LLM_MODEL_MAP, parse_llm_model_spec
+    LLM_MODEL_MAP, LLM_MODEL_REVERSE_MAP, parse_llm_model_spec
 )
 
 st.set_page_config(layout="wide")
@@ -80,21 +80,22 @@ def db_upsert_cfg(data):
         # print(sql_script)
         db_run_sql(sql_script, _conn)
 
-def get_data():
+def get_config_data(LIMIT=10):
     with DBConn() as _conn:
         sql_stmt = f"""
             select 
                 *
             from {TABLE_NAME}
             order by ts desc
-            limit 5
+            limit {LIMIT}
             ;
         """
         # print(sql_stmt)
         return pd.read_sql(sql_stmt, _conn)
 
 def main():
-
+    config = db_query_config()
+    # st.write(config)
     st.markdown(f"""
     ##### Data Base
 
@@ -108,13 +109,13 @@ def main():
             db_type = st.selectbox(
                 "DB Type",
                 options=db_list,
-                index=db_list.index("SQLite")
+                index=db_list.index(config.get("db_type"))
             )
 
         with c2:
             db_url = st.text_input(
                 "DB URL",
-                value=CFG["DB_APP_DATA"]
+                value=config.get("db_url")
             )
 
     st.markdown(f"""
@@ -126,7 +127,7 @@ def main():
         vector_db = st.selectbox(
             "Vector DB Type",
             options=vector_db_list,
-            index=vector_db_list.index("chromadb")
+            index=vector_db_list.index(config.get("vector_db"))
         )
 
     st.markdown(f"""
@@ -135,7 +136,7 @@ def main():
     """, unsafe_allow_html=True)    
 
     with st.expander("Select LLM model:", expanded=True):
-    
+        llm_model_name = LLM_MODEL_REVERSE_MAP.get(config["llm_model"])
         model_selected = st.radio(
             "GenAI model name",
             options=llm_model_list,
@@ -143,7 +144,7 @@ def main():
         )
         st.write(f"selected model: {model_selected}")
         llm_vendor, llm_model = parse_llm_model_spec(model_selected)
-
+# config.get("llm_model", "qwen2:7b")
     cfg_data = dict(
         llm_vendor=llm_vendor, 
         llm_model=llm_model, 
@@ -161,5 +162,5 @@ if __name__ == '__main__':
     main()
 
     # show 
-    data = get_data()
+    data = get_config_data()
     st.dataframe(data)

@@ -35,6 +35,8 @@ LLM_MODEL_MAP = {
     "Mistral Nemo(Open)": 'mistral-nemo',
 }
 
+LLM_MODEL_REVERSE_MAP = {v:k for k, v in LLM_MODEL_MAP.items()}
+
 def parse_llm_model_spec(model_name):
     llm_vendor = model_name.split()[0]
     llm_model = LLM_MODEL_MAP.get(model_name)
@@ -47,12 +49,11 @@ def lookup_llm_api_key(llm_model, llm_vendor):
             "OLLAMA" for open-source model
             None for unknown model
     """
-    reverse_map = {v:k for k, v in LLM_MODEL_MAP.items()}
-    if llm_model not in reverse_map:
+    if llm_model not in LLM_MODEL_REVERSE_MAP:
         st.error(f"Unknown LLM model: {llm_model}")
         return None
     
-    model_spec = reverse_map.get(llm_model)
+    model_spec = LLM_MODEL_REVERSE_MAP.get(llm_model)
     if "(Open)" in model_spec:
         return "OLLAMA"
 
