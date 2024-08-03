@@ -380,7 +380,7 @@ def db_upsert(data, user_key_cols="title", call_meta_func=False):
             print(f"[ERROR] db_upsert():\n\t{str(ex)}")
 
 def db_query_config():
-    with DBConn() as _conn:
+    with DBConn(CFG["DB_META_DATA"]) as _conn:
         sql_stmt = f"""
             select 
                 *

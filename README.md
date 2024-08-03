@@ -29,5 +29,7 @@ https://github.com/build-on-aws/amazon-bedrock-quick-start
 
 ## Changes
 
-### Vanna upgrade
-- [2024-07-21] from `0.6.2` to `0.6.3` to support AWS Bedrock
+- [2024-08-03] add IMDB movie dataset
+evaluate the same questions as asked in https://www.kaggle.com/code/priy998/imdb-sqlite/notebook
+
+- [2024-07-21] upgrade Vanna from `0.6.2` to `0.6.3` to support AWS Bedrock
