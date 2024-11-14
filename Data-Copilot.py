@@ -9,8 +9,8 @@ st.set_page_config(
 from dotenv import load_dotenv  # type: ignore
 load_dotenv()
 
-x = os.getenv("GOOGLE_MODEL")
-st.info(f"x = {x}")
+# x = os.getenv("GOOGLE_MODEL")
+# st.info(f"x = {x}")
 
 ## Welcome page
 st.markdown(f"""
@@ -28,5 +28,14 @@ By streamlining the data-to-insight life-cycle, **<span style="color: red;">Data
 """, unsafe_allow_html=True)
 
 st.image("./docs/data-copilot.drawio.png")
+
+
+st.markdown(f"""
+#### <span style="color: blue;">Demo Video</span>
+https://www.youtube.com/watch?v=RKSlUAFmbaM
+            
+#### <span style="color: blue;">GitHub Repo </span>
+https://github.com/gongwork/data-copilot
+""", unsafe_allow_html=True)
 
 

@@ -97,6 +97,10 @@ def main():
     # streamlit-aggrid==1.0.5
     selected_row = None if selected_rows is None or len(selected_rows) < 1 else selected_rows.to_dict(orient='records')[0]
 
+    # display form
+    ui_layout_form(selected_row, TABLE_NAME)
+
+    # display download CSV button
     c_1, c_2 = st.columns([3,3])
     with c_1:
         st.markdown(f"""
@@ -122,8 +126,7 @@ def main():
             {tag_str}
         """, unsafe_allow_html=True)
 
-    # display form
-    ui_layout_form(selected_row, TABLE_NAME)
+
 
 
 

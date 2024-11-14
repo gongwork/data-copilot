@@ -5,6 +5,7 @@ from vanna.ollama import Ollama
 from vanna.google import GoogleGeminiChat
 from vanna.openai import OpenAI_Chat
 from vanna.anthropic import Anthropic_Chat
+from vanna.bedrock import Bedrock_Converse
 from vanna.chromadb.chromadb_vector import ChromaDB_VectorStore
 
 # from api_key_store import ApiKeyStore
@@ -17,13 +18,29 @@ LLM_MODEL_MAP = {
     "OpenAI GPT 3.5 Turbo": 'gpt-3.5-turbo',
     "Google Gemini 1.5 Pro": 'gemini-1.5-pro',
     "Anthropic Claude 3.5 Sonnet": 'claude-3-5-sonnet-20240620',
+    # https://docs.anthropic.com/en/api/claude-on-amazon-bedrock
+    # latest: 'claude-3-5-sonnet-20240620-v1:0'
+    "AWS Bedrock Claude 3.0 Sonnet": 'claude-3-sonnet-20240229-v1:0', 
+    "DeepSeek Coder v2 (Open)": 'deepseek-coder-v2:latest',
+    "DeepSeek Coder (Open)": 'deepseek-llm:latest',
+    "Alibaba QWen 2:7b (Open)": 'qwen2:7b',
+    "Meta Llama 3.1 (Open)": 'llama3.1',
     "Meta Llama 3 (Open)": 'llama3',
-    "Alibaba QWen 2 (Open)": 'qwen2',
+    "Microsoft Phi 3 (Open)": 'phi3',
+    "Microsoft Phi 3:14b (Open)": 'phi3:14b',
+    "Google Gemma2 (Open)": 'gemma2:latest',
+    "Google Gemma2:2b (Open)": 'gemma2:2b',
     "Google CodeGemma (Open)": 'codegemma',
-    "Google Gemma (Open)": 'gemma',
     "Mistral (Open)": 'mistral',
+    "Mistral Nemo(Open)": 'mistral-nemo',
 }
 
+LLM_MODEL_REVERSE_MAP = {v:k for k, v in LLM_MODEL_MAP.items()}
+
+def parse_llm_model_spec(model_name):
+    llm_vendor = model_name.split()[0]
+    llm_model = LLM_MODEL_MAP.get(model_name)
+    return llm_vendor, llm_model
 
 def lookup_llm_api_key(llm_model, llm_vendor):
     """
@@ -32,12 +49,11 @@ def lookup_llm_api_key(llm_model, llm_vendor):
             "OLLAMA" for open-source model
             None for unknown model
     """
-    reverse_map = {v:k for k, v in LLM_MODEL_MAP.items()}
-    if llm_model not in reverse_map:
+    if llm_model not in LLM_MODEL_REVERSE_MAP:
         st.error(f"Unknown LLM model: {llm_model}")
         return None
     
-    model_spec = reverse_map.get(llm_model)
+    model_spec = LLM_MODEL_REVERSE_MAP.get(llm_model)
     if "(Open)" in model_spec:
         return "OLLAMA"
 
@@ -53,6 +69,8 @@ def lookup_llm_api_key(llm_model, llm_vendor):
     elif vendor == "OPENAI":
         # return aks.get_api_key(provider="OPENAI")
         return os.getenv("OPENAI_API_KEY")
+    elif vendor == "AWS":
+        return "KEY_NOT_NEEDED"
     else:
         st.error(f"Unknown LLM vendor: {vendor} | {llm_vendor}")
         return None
@@ -73,6 +91,11 @@ class MyVannaAnthropic(ChromaDB_VectorStore, Anthropic_Chat):
     def __init__(self, config=None):
         ChromaDB_VectorStore.__init__(self, config=config)
         Anthropic_Chat.__init__(self, config=config)
+
+class MyVannaBedrock(ChromaDB_VectorStore, Bedrock_Converse):
+    def __init__(self, config=None):
+        ChromaDB_VectorStore.__init__(self, config=config)
+        Bedrock_Converse.__init__(self, config=config)
 
 class MyVannaOllama(ChromaDB_VectorStore, Ollama):
     def __init__(self, config=None):
@@ -95,11 +118,11 @@ def setup_vanna(_cfg_data):
         return None
 
     if vector_db not in ["chromadb"]:
-        st.error(f"invalid vector_db: {vector_db}")
+        st.error(f"Unsupported vector_db: {vector_db}")
         return None
 
     if llm_api_key is None:
-        st.error(f"invalid LLM model")
+        st.error(f"Unsupported LLM model")
         return None
 
     elif llm_api_key == "OLLAMA":
@@ -118,6 +141,8 @@ def setup_vanna(_cfg_data):
             vn = MyVannaGoogle(config=config)
         elif llm_vendor == "Anthropic":  
             vn = MyVannaAnthropic(config=config)
+        elif llm_vendor == "AWS":  
+            vn = MyVannaBedrock(config=config)
         else:
             st.error(f"Unsupported LLM vendor: {llm_vendor}")
             return None

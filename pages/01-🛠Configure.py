@@ -1,6 +1,8 @@
 from utils import *
 
-from vanna_calls import LLM_MODEL_MAP
+from vanna_calls import (
+    LLM_MODEL_MAP, LLM_MODEL_REVERSE_MAP, parse_llm_model_spec
+)
 
 st.set_page_config(layout="wide")
 st.header(f"{STR_MENU_CONFIG} 🛠")
@@ -12,11 +14,6 @@ TABLE_NAME = CFG["TABLE_CONFIG"]
 KEY_PREFIX = f"col_{TABLE_NAME}"
 
 llm_model_list = list(LLM_MODEL_MAP.keys())
-
-def parse_llm_model_spec(model_name):
-    llm_vendor = model_name.split()[0]
-    llm_model = LLM_MODEL_MAP.get(model_name)
-    return llm_vendor, llm_model
 
 def db_upsert_cfg(data):
     llm_vendor=data.get("llm_vendor")
@@ -83,25 +80,28 @@ def db_upsert_cfg(data):
         # print(sql_script)
         db_run_sql(sql_script, _conn)
 
-def get_data():
+def get_config_data(LIMIT=10):
     with DBConn() as _conn:
         sql_stmt = f"""
             select 
                 *
             from {TABLE_NAME}
-            limit 5
+            order by ts desc
+            limit {LIMIT}
             ;
         """
         # print(sql_stmt)
         return pd.read_sql(sql_stmt, _conn)
 
 def main():
-
+    config = db_query_config()
+    # st.write(config)
     st.markdown(f"""
     ##### Data Base
 
     """, unsafe_allow_html=True)
-
+    avail_dbs = included_datasets()
+    st.write(avail_dbs)
     with st.expander("Specify data source:", expanded=True):
         db_list = ["BigQuery","DuckDB","MSSQL","MySQL","Oracle","Postgres","SnowFlake","SQLite"]
         c1, c2 = st.columns([2,6])
@@ -109,13 +109,13 @@ def main():
             db_type = st.selectbox(
                 "DB Type",
                 options=db_list,
-                index=db_list.index("SQLite")
+                index=db_list.index(config.get("db_type"))
             )
 
         with c2:
             db_url = st.text_input(
                 "DB URL",
-                value=CFG["DB_APP_DATA"]
+                value=config.get("db_url")
             )
 
     st.markdown(f"""
@@ -127,7 +127,7 @@ def main():
         vector_db = st.selectbox(
             "Vector DB Type",
             options=vector_db_list,
-            index=vector_db_list.index("chromadb")
+            index=vector_db_list.index(config.get("vector_db"))
         )
 
     st.markdown(f"""
@@ -136,15 +136,15 @@ def main():
     """, unsafe_allow_html=True)    
 
     with st.expander("Select LLM model:", expanded=True):
-    
+        llm_model_name = LLM_MODEL_REVERSE_MAP.get(config["llm_model"])
         model_selected = st.radio(
             "GenAI model name",
             options=llm_model_list,
-            index=llm_model_list.index("Anthropic Claude 3.5 Sonnet"),
+            index=llm_model_list.index("Alibaba QWen 2:7b (Open)"),
         )
-
+        st.write(f"selected model: {model_selected}")
         llm_vendor, llm_model = parse_llm_model_spec(model_selected)
-
+# config.get("llm_model", "qwen2:7b")
     cfg_data = dict(
         llm_vendor=llm_vendor, 
         llm_model=llm_model, 
@@ -162,5 +162,5 @@ if __name__ == '__main__':
     main()
 
     # show 
-    data = get_data()
+    data = get_config_data()
     st.dataframe(data)
