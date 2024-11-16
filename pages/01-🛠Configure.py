@@ -8,8 +8,6 @@ from vanna_calls import (
 st.set_page_config(layout="wide")
 st.header(f"{STR_MENU_CONFIG} 🛠")
 
-# x = os.getenv("GOOGLE_MODEL")
-# st.info(f"x = {x}")
 
 TABLE_NAME = CFG["TABLE_CONFIG"]
 KEY_PREFIX = f"col_{TABLE_NAME}"
