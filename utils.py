@@ -1,9 +1,7 @@
 """
 # ToDo
-- [2024-01-20]
 
 # Done
-- [2024-01-20]
 """
 
 # basic libs
@@ -381,8 +379,13 @@ def db_upsert(data, user_key_cols="title", call_meta_func=False):
             print(f"[ERROR] db_upsert():\n\t{str(ex)}")
 
 
-def included_datasets():
-    return [i for i in glob.glob("db/*.sqlite3") if "data_copilot" not in i]
+def included_datasets(db_type):
+    db_name = db_type.lower()
+    db_path = []
+    cwd = os.getcwd()
+    for p in [i for i in glob.glob("db/*") if "data_copilot" not in i and db_name in i.lower()]:
+        db_path.append(os.path.abspath(os.path.join(cwd, p)))
+    return db_path
 
 def db_query_config():
     with DBConn(CFG["DB_META_DATA"]) as _conn:

@@ -16,6 +16,9 @@ streamlit run Data-Copilot.py
 
 open browser at URL: http://localhost:8501
 
+### Notes
+- [plotly 5.23.0 is incompatible with vanna 0.7.4](https://github.com/vanna-ai/vanna/issues/704)
+
 ## Demo Video
 
 [Data Copilot for Self-Service Analytics](https://www.youtube.com/watch?v=RKSlUAFmbaM)

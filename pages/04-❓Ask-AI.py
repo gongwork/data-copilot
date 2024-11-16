@@ -22,24 +22,25 @@ st.header(f"{STR_MENU_ASK} ❓")
 TABLE_NAME = CFG["TABLE_QA"]
 KEY_PREFIX = f"col_{TABLE_NAME}"
 
-## sidebar Menu
-def do_sidebar():
-    with st.sidebar:
-        st.title("Output Settings:")
-        st.checkbox("Show SQL Query", value=True, key="show_sql")
-        st.checkbox("Show Dataframe", value=True, key="show_table")
-        st.checkbox("Show Python Code", value=True, key="show_plotly_code")
-        st.checkbox("Show Plotly Chart", value=True, key="show_chart")
-        st.checkbox("Show Summary", value=True, key="show_summary")
-        # st.checkbox("Show Follow-up Questions", value=False, key="show_followup")
+cfg_data = db_query_config()
+DB_URL = cfg_data.get("db_url")
 
-        st.checkbox("Debug", value=False, key="debug_ask_ai")
 
-        # st.button("Reset", on_click=lambda: reset_my_state(), use_container_width=True)
+sample_questions = {
+    "chinook" : f"""
+        #### Sample prompts for Chinook dataset
+        - List all the tables
+        - What tables store order information?
+        - Find top 5 customers by sales
+        - List all customers from Canada and their email addresses
+        - Find the top 5 most expensive tracks (based on unit price)
+        - Identify artists who have albums with tracks appearing in multiple genres (Hint: join artists and albums tables on ArtistId column)
 
-        st.markdown(f"""
-        #### Example prompts for Movie dataset
-        see [kaggle IMDB notebook](https://www.kaggle.com/code/priy998/imdb-sqlite/notebook)
+        see [text-to-SQL questions](https://github.com/wgong/py4kids/blob/master/lesson-18-ai/vanna/note_book/gongai/test-2/ollama-llama3-chromadb-sqlite-test-2.ipynb)
+        """,
+
+    "movie" : f"""
+        #### Sample prompts for Movie dataset
         - What are the tables in the movie database
         - what are the top 5 movies with highest budget? use bar chart to visualize data
         - how many movies are there
@@ -47,18 +48,35 @@ def do_sidebar():
         - Find these 3 directors: James Cameron ; Luc Besson ; John Woo
         - Find all directors with name starting with Steven
         - What movies have Steven Spielberg directed, please list them alphabetically
-        """, unsafe_allow_html=True)  
 
-        st.markdown(f"""
-        #### Example prompts for Chinook dataset
-        see [text-to-SQL questions](https://github.com/wgong/py4kids/blob/master/lesson-18-ai/vanna/note_book/gongai/test-2/ollama-llama3-chromadb-sqlite-test-2.ipynb)
-        - List all the tables
-        - What tables store order information?
-        - Find top 5 customers by sales
-        - List all customers from Canada and their email addresses
-        - Find the top 5 most expensive tracks (based on unit price)
-        - Identify artists who have albums with tracks appearing in multiple genres (Hint: join artists and albums tables on ArtistId column)
-        """, unsafe_allow_html=True)  
+        see [kaggle IMDB notebook](https://www.kaggle.com/code/priy998/imdb-sqlite/notebook)
+        """,
+
+}
+
+## sidebar Menu
+def do_sidebar():
+    with st.sidebar:
+        with st.expander("Output Settings", expanded=False):
+
+            st.checkbox("Show SQL Query", value=True, key="show_sql")
+            st.checkbox("Show Dataframe", value=True, key="show_table")
+            st.checkbox("Show Python Code", value=True, key="show_plotly_code")
+            st.checkbox("Show Plotly Chart", value=True, key="show_chart")
+            st.checkbox("Show Summary", value=True, key="show_summary")
+            # st.checkbox("Show Follow-up Questions", value=False, key="show_followup")
+
+            st.checkbox("Debug", value=False, key="debug_ask_ai")
+
+            # st.button("Reset", on_click=lambda: reset_my_state(), use_container_width=True)
+
+        sample_q = ""
+        for db_name in sample_questions.keys():
+            if db_name in DB_URL:
+                sample_q = sample_questions.get(db_name,"")
+
+        if sample_q:
+            st.markdown(sample_q, unsafe_allow_html=True)  
 
  
 def db_insert_qa_result(qa_data):
@@ -176,9 +194,7 @@ def ask_ai():
             assistant_message = st.chat_message(
                 "assistant", avatar=VANNA_ICON_URL
             )
-            msg = f"""Invalid SQL below:
-                {my_sql}
-            """
+            msg = f"""{my_sql}"""
             assistant_message.write(msg)
 
         my_answer.update({"my_valid_sql":{"data":my_valid_sql}})

@@ -15,7 +15,8 @@ Results by asking 24 questions on Chinook dataset using 9 LLM models
 """, unsafe_allow_html=True)
 
 # st.image("./docs/model-cross-comparison-2024-06-21.png")
-st.image("./docs/model-cross-comparison-2024-07-21.png")
+# st.image("./docs/model-cross-comparison-2024-07-21.png")
+st.image("./docs/Text2SQL-benchmark-2024-11-16_11-50-42.png")
 
 st.markdown(f"""
 #### Details

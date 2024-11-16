@@ -5,13 +5,15 @@ from vanna.ollama import Ollama
 from vanna.google import GoogleGeminiChat
 from vanna.openai import OpenAI_Chat
 from vanna.anthropic import Anthropic_Chat
-from vanna.bedrock import Bedrock_Converse
+# from vanna.bedrock import Bedrock_Converse
 from vanna.chromadb.chromadb_vector import ChromaDB_VectorStore
 
 # from api_key_store import ApiKeyStore
 import os
 from dotenv import load_dotenv  # type: ignore
 load_dotenv()
+
+DEFAULT_LLM_MODEL = "Alibaba QWen 2.5 Coder (Open)"
 
 LLM_MODEL_MAP = {
     "OpenAI GPT 4": 'gpt-4',
@@ -21,9 +23,10 @@ LLM_MODEL_MAP = {
     # https://docs.anthropic.com/en/api/claude-on-amazon-bedrock
     # latest: 'claude-3-5-sonnet-20240620-v1:0'
     "AWS Bedrock Claude 3.0 Sonnet": 'claude-3-sonnet-20240229-v1:0', 
+    "CodeGeeX4 (Open)": 'codegeex4:latest',
     "DeepSeek Coder v2 (Open)": 'deepseek-coder-v2:latest',
-    "DeepSeek Coder (Open)": 'deepseek-llm:latest',
-    "Alibaba QWen 2:7b (Open)": 'qwen2:7b',
+    "Alibaba QWen 2.5 Coder (Open)": 'qwen2.5-coder:latest',
+    "Alibaba QWen 2.5 (Open)": 'qwen2.5:latest',
     "Meta Llama 3.1 (Open)": 'llama3.1',
     "Meta Llama 3 (Open)": 'llama3',
     "Microsoft Phi 3 (Open)": 'phi3',
@@ -92,10 +95,10 @@ class MyVannaAnthropic(ChromaDB_VectorStore, Anthropic_Chat):
         ChromaDB_VectorStore.__init__(self, config=config)
         Anthropic_Chat.__init__(self, config=config)
 
-class MyVannaBedrock(ChromaDB_VectorStore, Bedrock_Converse):
-    def __init__(self, config=None):
-        ChromaDB_VectorStore.__init__(self, config=config)
-        Bedrock_Converse.__init__(self, config=config)
+# class MyVannaBedrock(ChromaDB_VectorStore, Bedrock_Converse):
+#     def __init__(self, config=None):
+#         ChromaDB_VectorStore.__init__(self, config=config)
+#         Bedrock_Converse.__init__(self, config=config)
 
 class MyVannaOllama(ChromaDB_VectorStore, Ollama):
     def __init__(self, config=None):
@@ -141,8 +144,8 @@ def setup_vanna(_cfg_data):
             vn = MyVannaGoogle(config=config)
         elif llm_vendor == "Anthropic":  
             vn = MyVannaAnthropic(config=config)
-        elif llm_vendor == "AWS":  
-            vn = MyVannaBedrock(config=config)
+        # elif llm_vendor == "AWS":  
+        #     vn = MyVannaBedrock(config=config)
         else:
             st.error(f"Unsupported LLM vendor: {llm_vendor}")
             return None
@@ -166,7 +169,7 @@ def generate_followup_cached(_cfg_data, question, sql, df):
     vn = setup_vanna(_cfg_data)
     return vn.generate_followup_questions(question=question, sql=sql, df=df)
 
-# @st.cache_data(show_spinner="Generating SQL query ...")
+@st.cache_data(show_spinner="Generating SQL query ...")
 def generate_sql_cached(_cfg_data, question: str):
     vn = setup_vanna(_cfg_data)
     question_hint = f"""
