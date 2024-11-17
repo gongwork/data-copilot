@@ -6,7 +6,7 @@ st.header(f"{STR_MENU_TRAIN} 📚")
 def main():
     cfg_data = db_query_config()
     
-    vn = setup_vanna(cfg_data)
+    vn = setup_vanna_cached(cfg_data)
 
 
     with st.expander("Manage Knowledge", expanded=False):

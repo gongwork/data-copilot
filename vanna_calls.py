@@ -8,6 +8,8 @@ from vanna.anthropic import Anthropic_Chat
 # from vanna.bedrock import Bedrock_Converse
 from vanna.chromadb.chromadb_vector import ChromaDB_VectorStore
 
+
+
 # from api_key_store import ApiKeyStore
 import os
 from dotenv import load_dotenv  # type: ignore
@@ -105,17 +107,16 @@ class MyVannaOllama(ChromaDB_VectorStore, Ollama):
         ChromaDB_VectorStore.__init__(self, config=config)
         Ollama.__init__(self, config=config)
 
+def unpack_cfg(cfg_data):
+    llm_vendor = cfg_data.get("llm_vendor")
+    llm_model = cfg_data.get("llm_model")
+    vector_db = cfg_data.get("vector_db")
+    db_type = cfg_data.get("db_type")
+    db_url = cfg_data.get("db_url")
+    return llm_vendor,llm_model,vector_db,db_type,db_url
+
 @st.cache_resource(ttl=3600)
-def setup_vanna(_cfg_data):
-
-    llm_vendor = _cfg_data.get("llm_vendor")
-    llm_model = _cfg_data.get("llm_model")
-    # print(f"llm_model = {llm_model}")
-    llm_api_key = lookup_llm_api_key(llm_model, llm_vendor)
-    vector_db = _cfg_data.get("vector_db")
-    db_type = _cfg_data.get("db_type")
-    db_url = _cfg_data.get("db_url")
-
+def setup_vanna(llm_vendor,llm_model,vector_db,db_type,db_url):
     if db_type not in ["SQLite"]:
         st.error(f"Unsupported db_type: {db_type}")
         return None
@@ -124,8 +125,9 @@ def setup_vanna(_cfg_data):
         st.error(f"Unsupported vector_db: {vector_db}")
         return None
 
-    if llm_api_key is None:
-        st.error(f"Unsupported LLM model")
+    llm_api_key = lookup_llm_api_key(llm_model, llm_vendor)
+    if not llm_api_key:
+        st.error(f"Missing llm_api_key")
         return None
 
     elif llm_api_key == "OLLAMA":
@@ -158,20 +160,17 @@ def setup_vanna(_cfg_data):
 
     return vn
 
-@st.cache_data(show_spinner="Generating sample questions ...")
-def generate_questions_cached(_cfg_data):
-    vn = setup_vanna(_cfg_data)
-    return vn.generate_questions()
+def setup_vanna_cached(cfg_data):
+    llm_vendor,llm_model,vector_db,db_type,db_url = unpack_cfg(cfg_data)
+    vn = setup_vanna(llm_vendor,llm_model,vector_db,db_type,db_url)
+    if vn is None:
+        raise Exception(f"setup_vanna() failed: llm_vendor,llm_model,vector_db,db_type,db_url = {llm_vendor}; {llm_model}; {vector_db}; {db_type}; {db_url}")
+    return vn
 
 ## Streamlit will not hash an argument with a leading underscore
-@st.cache_data(show_spinner="Generating followup questions ...")
-def generate_followup_cached(_cfg_data, question, sql, df):
-    vn = setup_vanna(_cfg_data)
-    return vn.generate_followup_questions(question=question, sql=sql, df=df)
-
 @st.cache_data(show_spinner="Generating SQL query ...")
-def generate_sql_cached(_cfg_data, question: str):
-    vn = setup_vanna(_cfg_data)
+def generate_sql_cached(cfg_data, question: str):
+    vn = setup_vanna_cached(cfg_data)
     question_hint = f"""
         Hint: When generating an SQL query, you must terminate the SQL query with an semicolon!
 
@@ -182,40 +181,37 @@ def generate_sql_cached(_cfg_data, question: str):
     return my_sql
 
 @st.cache_data(show_spinner="Checking for valid SQL ...")
-def is_sql_valid_cached(_cfg_data, sql: str):
-    vn = setup_vanna(_cfg_data)
-    return vn.is_sql_valid(sql=sql)
-
-def is_sql_valid(_cfg_data, sql: str):
-    vn = setup_vanna(_cfg_data)
+def is_sql_valid(cfg_data, sql: str):
+    vn = setup_vanna_cached(cfg_data)
     return vn.is_sql_valid(sql=sql)
 
 @st.cache_data(show_spinner="Running SQL query ...")
-def run_sql_cached(_cfg_data, sql: str):
-    vn = setup_vanna(_cfg_data)
+def run_sql_cached(cfg_data, sql: str):
+    vn = setup_vanna_cached(cfg_data)
     return vn.run_sql(sql=sql)
 
 @st.cache_data(show_spinner="Checking if we should generate a chart ...")
-def should_generate_chart_cached(_cfg_data, question, sql, df):
-    vn = setup_vanna(_cfg_data)
+def should_generate_chart_cached(cfg_data, question, sql, df):
+    vn = setup_vanna_cached(cfg_data)
     return vn.should_generate_chart(df=df)
 
 @st.cache_data(show_spinner="Generating Plotly code ...")
-def generate_plotly_code_cached(_cfg_data, question, sql, df):
-    vn = setup_vanna(_cfg_data)
+def generate_plotly_code_cached(cfg_data, question, sql, df):
+    vn = setup_vanna_cached(cfg_data)
     return vn.generate_plotly_code(question=question, sql=sql, df=df)
 
 @st.cache_data(show_spinner="Running Plotly code ...")
-def generate_plot_cached(_cfg_data, code, df):
-    vn = setup_vanna(_cfg_data)
+def generate_plot_cached(cfg_data, code, df):
+    vn = setup_vanna_cached(cfg_data)
     return vn.get_plotly_figure(plotly_code=code, df=df)
 
 @st.cache_data(show_spinner="Generating summary ...")
-def generate_summary_cached(_cfg_data, question, df):
-    vn = setup_vanna(_cfg_data)
+def generate_summary_cached(cfg_data, question, df):
+    vn = setup_vanna_cached(cfg_data)
     return vn.generate_summary(question=question, df=df)
 
-@st.cache_data(show_spinner="Show training data ...")
-def show_training_data_cached(_cfg_data):
-    vn = setup_vanna(_cfg_data)
+def show_training_data_cached(cfg_data):
+    vn = setup_vanna_cached(cfg_data)
     return vn.get_training_data()
+
+

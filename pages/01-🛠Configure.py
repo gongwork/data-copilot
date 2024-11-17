@@ -1,10 +1,5 @@
 from utils import *
 
-from vanna_calls import (
-    LLM_MODEL_MAP, LLM_MODEL_REVERSE_MAP, parse_llm_model_spec,
-    DEFAULT_LLM_MODEL
-)
-
 st.set_page_config(layout="wide")
 st.header(f"{STR_MENU_CONFIG} 🛠")
 
@@ -93,46 +88,41 @@ def get_config_data(LIMIT=10):
         return pd.read_sql(sql_stmt, _conn)
 
 def main():
-    config = db_query_config()
-    # st.write(config)
+    cfg_data = db_query_config()
+    # st.write(cfg_data)
     st.markdown(f"""
     ##### Data Base
 
     """, unsafe_allow_html=True)
     
-    with st.expander("Specify data source:", expanded=True):
-        db_list = ["BigQuery","DuckDB","MSSQL","MySQL","Oracle","Postgres","SnowFlake","SQLite"]
+    with st.expander("Specify data source: (default - SQLite)", expanded=True):
+        db_list = sorted(SQL_DIALECTS)
         c1, c2 = st.columns([2,6])
         with c1:
             db_type = st.selectbox(
                 "DB Type",
                 options=db_list,
-                index=db_list.index(config.get("db_type"))
+                index=db_list.index(cfg_data.get("db_type"))
             )
 
         with c2:
-            avail_dbs = included_datasets(db_type)
-            idx = 0
-            for idx,db_path in enumerate(avail_dbs):
-                if "chinook" in db_path:
-                    break
-            # st.write(avail_dbs)
+            avail_dbs = list_datasets(db_type)
             db_url = st.selectbox(
                 "DB URL",
                 options=avail_dbs,
-                index=idx
+                index=avail_dbs.index(cfg_data.get("db_url"))
             )
 
     st.markdown(f"""
     ##### Knowledge Base
     """, unsafe_allow_html=True)    
 
-    with st.expander("Specify vector store:", expanded=True):
-        vector_db_list = ["chromadb", "marqo", "opensearch","pinecone", "qdrant",]
+    with st.expander("Specify vector store: (default - ChromaDB)", expanded=True):
+        vector_db_list = sorted(VECTOR_DB_LIST)
         vector_db = st.selectbox(
             "Vector DB Type",
             options=vector_db_list,
-            index=vector_db_list.index(config.get("vector_db"))
+            index=vector_db_list.index(cfg_data.get("vector_db"))
         )
 
     st.markdown(f"""
@@ -140,26 +130,24 @@ def main():
 
     """, unsafe_allow_html=True)    
 
-    with st.expander("Select LLM model:", expanded=True):
-        llm_model_name = LLM_MODEL_REVERSE_MAP.get(config["llm_model"])
+    with st.expander("Specify LLM model: (default - Alibaba QWen 2.5 Coder) ", expanded=True):
+        llm_model_name = LLM_MODEL_REVERSE_MAP.get(cfg_data.get("llm_model"), DEFAULT_LLM_MODEL)
         model_selected = st.radio(
-            "GenAI model name",
+            "Model name",
             options=llm_model_list,
-            index=llm_model_list.index(DEFAULT_LLM_MODEL),
+            index=llm_model_list.index(llm_model_name),
         )
-        st.write(f"selected model: {model_selected}")
+        # st.write(f"selected model: {model_selected}")
         llm_vendor, llm_model = parse_llm_model_spec(model_selected)
-# config.get("llm_model", "qwen2:7b")
-    cfg_data = dict(
-        llm_vendor=llm_vendor, 
-        llm_model=llm_model, 
-        vector_db=vector_db, 
-        db_type=db_type, 
-        db_url=db_url
-    )
 
-    # st.write(cfg_data)
     if st.button("Save"):
+        cfg_data = dict(
+            llm_vendor=llm_vendor, 
+            llm_model=llm_model, 
+            vector_db=vector_db, 
+            db_type=db_type, 
+            db_url=db_url
+        )
         db_upsert_cfg(cfg_data)
 
 

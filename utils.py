@@ -32,17 +32,20 @@ from st_aggrid import (
 from ui_layout import *
 
 from vanna_calls import (
-    setup_vanna,
-    generate_questions_cached,
+    setup_vanna_cached,
     generate_sql_cached,
     run_sql_cached,
     generate_plotly_code_cached,
     generate_plot_cached,
-    generate_followup_cached,
     should_generate_chart_cached,
-    is_sql_valid_cached,
     generate_summary_cached,
+    LLM_MODEL_MAP, 
+    LLM_MODEL_REVERSE_MAP, 
+    parse_llm_model_spec,
+    DEFAULT_LLM_MODEL,
 )
+
+from vanna.base import SQL_DIALECTS, VECTOR_DB_LIST
 
 #############################
 # Config params (1st)
@@ -379,7 +382,7 @@ def db_upsert(data, user_key_cols="title", call_meta_func=False):
             print(f"[ERROR] db_upsert():\n\t{str(ex)}")
 
 
-def included_datasets(db_type):
+def list_datasets(db_type):
     db_name = db_type.lower()
     db_path = []
     cwd = os.getcwd()

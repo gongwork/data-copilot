@@ -2,15 +2,11 @@ from utils import *
 from time import time
 
 from vanna_calls import (
-    setup_vanna,
-    generate_questions_cached,
     generate_sql_cached,
     run_sql_cached,
     generate_plotly_code_cached,
     generate_plot_cached,
-    generate_followup_cached,
     should_generate_chart_cached,
-    is_sql_valid_cached,
     is_sql_valid,
     generate_summary_cached,
 )
@@ -63,7 +59,7 @@ def do_sidebar():
             st.checkbox("Show Dataframe", value=True, key="show_table")
             st.checkbox("Show Python Code", value=True, key="show_plotly_code")
             st.checkbox("Show Plotly Chart", value=True, key="show_chart")
-            st.checkbox("Show Summary", value=True, key="show_summary")
+            st.checkbox("Show Summary", value=False, key="show_summary")
             # st.checkbox("Show Follow-up Questions", value=False, key="show_followup")
 
             st.checkbox("Debug", value=False, key="debug_ask_ai")
@@ -152,7 +148,6 @@ def ask_ai():
     """ Ask Vanna.AI questions
 
     TODO 
-        - store results into "t_qa" table
     """
     # create Vanna instance
     cfg_data = db_query_config()
@@ -187,7 +182,6 @@ def ask_ai():
 
 
         my_valid_sql = True
-        # if not is_sql_valid_cached(cfg_data, sql=my_sql):
         if not is_sql_valid(cfg_data, sql=my_sql):
             my_valid_sql = False
 
