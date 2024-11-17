@@ -1,14 +1,13 @@
 from utils import *
 
 from vanna_calls import (
-    LLM_MODEL_MAP, LLM_MODEL_REVERSE_MAP, parse_llm_model_spec
+    LLM_MODEL_MAP, LLM_MODEL_REVERSE_MAP, parse_llm_model_spec,
+    DEFAULT_LLM_MODEL
 )
 
 st.set_page_config(layout="wide")
 st.header(f"{STR_MENU_CONFIG} 🛠")
 
-# x = os.getenv("GOOGLE_MODEL")
-# st.info(f"x = {x}")
 
 TABLE_NAME = CFG["TABLE_CONFIG"]
 KEY_PREFIX = f"col_{TABLE_NAME}"
@@ -100,8 +99,7 @@ def main():
     ##### Data Base
 
     """, unsafe_allow_html=True)
-    avail_dbs = included_datasets()
-    st.write(avail_dbs)
+    
     with st.expander("Specify data source:", expanded=True):
         db_list = ["BigQuery","DuckDB","MSSQL","MySQL","Oracle","Postgres","SnowFlake","SQLite"]
         c1, c2 = st.columns([2,6])
@@ -113,9 +111,16 @@ def main():
             )
 
         with c2:
-            db_url = st.text_input(
+            avail_dbs = included_datasets(db_type)
+            idx = 0
+            for idx,db_path in enumerate(avail_dbs):
+                if "chinook" in db_path:
+                    break
+            # st.write(avail_dbs)
+            db_url = st.selectbox(
                 "DB URL",
-                value=config.get("db_url")
+                options=avail_dbs,
+                index=idx
             )
 
     st.markdown(f"""
@@ -140,7 +145,7 @@ def main():
         model_selected = st.radio(
             "GenAI model name",
             options=llm_model_list,
-            index=llm_model_list.index("Alibaba QWen 2:7b (Open)"),
+            index=llm_model_list.index(DEFAULT_LLM_MODEL),
         )
         st.write(f"selected model: {model_selected}")
         llm_vendor, llm_model = parse_llm_model_spec(model_selected)
@@ -161,6 +166,6 @@ def main():
 if __name__ == '__main__':
     main()
 
-    # show 
-    data = get_config_data()
-    st.dataframe(data)
+    with st.expander("Show Config Data:", expanded=False):
+        data = get_config_data()
+        st.dataframe(data)

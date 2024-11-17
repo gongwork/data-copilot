@@ -9,13 +9,14 @@ st.header(f"{STR_MENU_EVAL} 💯")
 
 st.markdown(f"""
 #### Summary
-Results by asking 24 questions on Chinook dataset using 9 LLM models
-- **Closed models**: gpt-4o-mini, gpt-4, gpt-3.5-turbo, claude-3.5-sonnet, gemini-1.5-pro 
-- **Open models**: llama3, gemma2, gemma, codegemma, qwen2, mistral
+Results by asking 24 questions on Chinook dataset using the following LLM models
+- **Closed models**: gpt-4o, gpt-4, claude-3.5-sonnet, gemini-1.5-pro 
+- **Open models**: qwen2.5, deepseek, llama3, gemma2, codegemma,  mistral
 """, unsafe_allow_html=True)
 
 # st.image("./docs/model-cross-comparison-2024-06-21.png")
-st.image("./docs/model-cross-comparison-2024-07-21.png")
+# st.image("./docs/model-cross-comparison-2024-07-21.png")
+st.image("./docs/Text2SQL-benchmark-2024-11-16_11-50-42.png")
 
 st.markdown(f"""
 #### Details

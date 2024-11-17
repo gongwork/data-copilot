@@ -6,7 +6,7 @@ st.set_page_config(
      initial_sidebar_state="expanded",
 )
 st.header(f"{STR_MENU_ACKNOWLEDGE} 💜")
-
+st.image("./docs/thank-you.png")
 st.markdown(f"""
 - [Vanna.ai](https://github.com/vanna-ai)
 - [Streamlit](https://streamlit.io/)            
@@ -23,4 +23,3 @@ st.markdown(f"""
      - [EmojiHub](https://emojihub.org/)
 """, unsafe_allow_html=True)
 
-st.image("./docs/thank-you.png")

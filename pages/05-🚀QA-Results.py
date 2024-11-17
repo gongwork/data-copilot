@@ -12,7 +12,8 @@ def get_data():
             select 
                 *
             from {TABLE_NAME}
-            limit 5
+            order by ts desc
+            limit 100
             ;
         """
         # print(sql_stmt)

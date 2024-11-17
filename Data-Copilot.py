@@ -1,3 +1,11 @@
+"""
+# ToDo
+- [2024-11-16]
+    - add Chat CSV
+
+# Done
+"""
+
 from utils import *
 
 st.set_page_config(
@@ -9,8 +17,16 @@ st.set_page_config(
 from dotenv import load_dotenv  # type: ignore
 load_dotenv()
 
-# x = os.getenv("GOOGLE_MODEL")
-# st.info(f"x = {x}")
+DEBUG_KEY = False
+if DEBUG_KEY:
+  x = os.getenv("GOOGLE_MODEL")
+  y = os.getenv("GOOGLE_API_KEY")
+  # x = os.getenv("ANTHROPIC_MODEL")
+  # x = os.getenv("ANTHROPIC_API_KEY")
+  # x = os.getenv("OPENAI_MODEL")
+  # x = os.getenv("OPENAI_API_KEY")
+  st.info(f"Model = {x} , API_Key = {y}")
+
 
 ## Welcome page
 st.markdown(f"""
