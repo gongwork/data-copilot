@@ -13,14 +13,16 @@ CREATE TABLE if not exists t_qa
 	, sql_hash text
 	, sql_is_valid INTEGER  DEFAULT 0
 
-	, df_data text
-	
+	, df_ts_delta float
+
 	, py_generated text
 	, py_ts_delta float
 	, py_revised text
 	, py_hash text
 	, py_is_valid text  DEFAULT 'Y'
+
 	, fig_generated text
+	, fig_ts_delta float
 	
 	, summary_generated text
 	, summary_ts_delta float
@@ -39,7 +41,6 @@ CREATE TABLE if not exists t_config
     , vector_db text
 	, llm_vendor text
 	, llm_model text
-	, llm_api_key text
 	, db_type text
 	, db_url text
 

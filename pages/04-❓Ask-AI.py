@@ -18,7 +18,7 @@ st.header(f"{STR_MENU_ASK} ❓")
 TABLE_NAME = CFG["TABLE_QA"]
 KEY_PREFIX = f"col_{TABLE_NAME}"
 
-cfg_data = db_query_config()
+cfg_data = db_current_cfg()
 DB_URL = cfg_data.get("db_url")
 
 
@@ -26,7 +26,7 @@ sample_questions = {
     "chinook" : f"""
         #### Sample prompts for Chinook dataset
         - List all the tables
-        - What tables store order information?
+        - What tables store order information? Hint: table_name is stored in column called "name" from table called sqlite_master
         - Find top 5 customers by sales
         - List all customers from Canada and their email addresses
         - Find the top 5 most expensive tracks (based on unit price)
@@ -88,10 +88,6 @@ def db_insert_qa_result(qa_data):
     
     sql_is_valid = "Y" if answer.get("my_valid_sql")["data"] else "N"
 
-    # my_df = answer.get("my_df", "")
-    # if my_df:
-    #     df_data = escape_single_quote(my_df.get("data", ""))
-
     my_plot = answer.get("my_plot", {})
     py_generated = escape_single_quote(my_plot.get("data", "")) if my_plot else ""
     py_ts_delta = my_plot.get("ts_delta", "") if my_plot else ""
@@ -150,7 +146,7 @@ def ask_ai():
     TODO 
     """
     # create Vanna instance
-    cfg_data = db_query_config()
+    cfg_data = db_current_cfg()
     if st.session_state.get("debug_ask_ai", False):
         st.write(cfg_data)
 

@@ -3,41 +3,12 @@ from utils import *
 st.set_page_config(layout="wide")
 st.header(f"{STR_MENU_DB} 💻")
 
-cfg_data = db_query_config()
+cfg_data = db_current_cfg()
 DB_URL = cfg_data.get("db_url")
-
-def get_data(table_name):
-    with DBConn(DB_URL) as _conn:
-        sql_stmt = f"""
-            select 
-                *
-            from {table_name}
-            limit 5
-            ;
-        """
-        # print(sql_stmt)
-        return pd.read_sql(sql_stmt, _conn)
-
-
-def _get_tables():
-    """get a list of tables from SQLite database
-    """
-    with DBConn(DB_URL) as _conn:
-        sql_stmt = f'''
-        SELECT 
-            name
-        FROM 
-            sqlite_schema
-        WHERE 
-            type ='table' AND 
-            name NOT LIKE 'sqlite_%';
-        '''
-        df = pd.read_sql(sql_stmt, _conn)
-    return df["name"].to_list()
 
 def _execute_code_sql(code):
     with DBConn(DB_URL) as _conn:
-        if code.strip().lower().startswith("select"):
+        if code.strip().lower().startswith("select") or code.strip().lower().startswith("with"):
             df = pd.read_sql(code, _conn)
             st.dataframe(df)
         elif code.strip().split(" ")[0].lower() in ["create", "insert","update", "delete", "drop"]:
@@ -53,7 +24,7 @@ def main():
     Current DB URL = {DB_URL}
     """, unsafe_allow_html=True)    
 
-    tables = _get_tables()
+    tables = db_list_tables_sqlite(DB_URL)
     idx_default = 0
     schema_value = st.session_state.get("TABLE_SCHEMA", "")
     c1, _, c2  = st.columns([3,1,8])

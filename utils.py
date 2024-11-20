@@ -9,7 +9,7 @@ from datetime import datetime
 from io import StringIO 
 import os
 import re
-import glob
+from glob import glob
 from traceback import format_exc
 from pathlib import Path
 from uuid import uuid4
@@ -39,10 +39,10 @@ from vanna_calls import (
     generate_plot_cached,
     should_generate_chart_cached,
     generate_summary_cached,
-    LLM_MODEL_MAP, 
-    LLM_MODEL_REVERSE_MAP, 
     parse_llm_model_spec,
     DEFAULT_LLM_MODEL,
+    LLM_MODEL_MAP, 
+    LLM_MODEL_REVERSE_MAP, 
 )
 
 from vanna.base import SQL_DIALECTS, VECTOR_DB_LIST
@@ -74,7 +74,7 @@ CFG = {
     "SQL_EXECUTION_FLAG" : True, #  False, #   control SQL
     
     "DB_META_DATA" : Path(__file__).parent / "db" / "data_copilot.sqlite3",
-    "DB_APP_DATA" : Path(__file__).parent / "db" / "chinook.sqlite3",
+    "DDL_SCRIPT" : Path(__file__).parent / "db" / "data_copilot_ddl.sql",
 
     # assign table names
     "TABLE_QA" : "t_qa",                # Question/Answer pair
@@ -208,6 +208,25 @@ def dump_jsonl(file_path):
         for obj in st.session_state["my_results"]:
             writer.write(obj)  
 
+def trim_str_col_val(data):
+    data_new = {}
+    for k,v in data.items():
+        if isinstance(v, str):
+            v = v.strip()
+        data_new.update({k:v})
+    return data_new
+
+def list_datasets(db_type="SQLite"):
+    db_name = db_type.lower()
+    db_path = []
+    cwd = os.getcwd()
+    for p in [i for i in glob(f"db/**/*.{db_name}*", recursive=True) if "data_copilot" not in i and db_name in i.lower()]:
+        db_path.append(os.path.abspath(os.path.join(cwd, p)))
+    return db_path
+
+#############################
+#  DB Helpers
+#############################
 def db_run_sql(sql_stmt, conn=None, debug=CFG["DEBUG_FLAG"]):
     """handles both select and insert/update/delete
     """
@@ -216,7 +235,8 @@ def db_run_sql(sql_stmt, conn=None, debug=CFG["DEBUG_FLAG"]):
     
     debug_print(sql_stmt, debug=debug)
 
-    if sql_stmt.lower().strip().startswith("select"):
+    x = sql_stmt.lower().strip()
+    if x.startswith("select") or x.startswith("with"):
         return pd.read_sql(sql_stmt, conn)
     
     cur = conn.cursor()
@@ -226,18 +246,34 @@ def db_run_sql(sql_stmt, conn=None, debug=CFG["DEBUG_FLAG"]):
     return None
 
 
-def db_execute(sql_statement, 
+def db_execute(sql_stmt, 
                debug=CFG["DEBUG_FLAG"], 
                execute_flag=CFG["SQL_EXECUTION_FLAG"],):
     """handles insert/update/delete
     """
     with DBConn() as _conn:
-        debug_print(sql_statement, debug=debug)
+        debug_print(sql_stmt, debug=debug)
         if execute_flag:
-            _conn.execute(sql_statement)
+            _conn.execute(sql_stmt)
             _conn.commit()
         else:
             print("[WARN] SQL Execution is off ! ")   
+
+def db_list_tables_sqlite(db_url):
+    """get a list of tables from SQLite database
+    """
+    with DBConn(db_url) as _conn:
+        sql_stmt = f'''
+        SELECT 
+            name
+        FROM 
+            sqlite_schema
+        WHERE 
+            type ='table' AND 
+            name NOT LIKE 'sqlite_%';
+        '''
+        df = pd.read_sql(sql_stmt, _conn)
+    return df["name"].to_list()
 
 
 def db_get_row_count(table_name):
@@ -262,14 +298,6 @@ def db_select_by_id(table_name, id_value=""):
         """
         return pd.read_sql(sql_stmt, _conn).fillna("").to_dict('records')
 
-
-def trim_str_col_val(data):
-    data_new = {}
-    for k,v in data.items():
-        if isinstance(v, str):
-            v = v.strip()
-        data_new.update({k:v})
-    return data_new
 
 def db_upsert(data, user_key_cols="title", call_meta_func=False):
     """ 
@@ -381,16 +409,23 @@ def db_upsert(data, user_key_cols="title", call_meta_func=False):
         except Exception as ex:
             print(f"[ERROR] db_upsert():\n\t{str(ex)}")
 
+def db_query_data(db_url, table_name, limit=50, order_by=""):
+    with DBConn(db_url) as _conn:
+        order_by = order_by.strip()
+        order_by_clause = f" order by {order_by} " if order_by else " "
+        limit_clause = f" limit {limit} " if limit and limit > 0 else " "
 
-def list_datasets(db_type):
-    db_name = db_type.lower()
-    db_path = []
-    cwd = os.getcwd()
-    for p in [i for i in glob.glob("db/*") if "data_copilot" not in i and db_name in i.lower()]:
-        db_path.append(os.path.abspath(os.path.join(cwd, p)))
-    return db_path
+        sql_stmt = f"""
+            select 
+                *
+            from {table_name}
+            {order_by_clause}
+            {limit_clause}
+            ;
+        """
+        return pd.read_sql(sql_stmt, _conn)
 
-def db_query_config():
+def db_current_cfg():
     with DBConn(CFG["DB_META_DATA"]) as _conn:
         sql_stmt = f"""
             select 
@@ -478,7 +513,7 @@ def db_update_by_id(data, update_changed=True):
             )
 
 #############################
-#  Misc
+#  Misc Helpers
 #############################
 def debug_print(msg, debug=CFG["DEBUG_FLAG"]):
     if debug and msg:

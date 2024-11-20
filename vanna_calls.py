@@ -5,7 +5,7 @@ from vanna.ollama import Ollama
 from vanna.google import GoogleGeminiChat
 from vanna.openai import OpenAI_Chat
 from vanna.anthropic import Anthropic_Chat
-# from vanna.bedrock import Bedrock_Converse
+from vanna.bedrock import Bedrock_Converse
 from vanna.chromadb.chromadb_vector import ChromaDB_VectorStore
 
 
@@ -80,8 +80,6 @@ def lookup_llm_api_key(llm_model, llm_vendor):
         st.error(f"Unknown LLM vendor: {vendor} | {llm_vendor}")
         return None
 
-
-
 class MyVannaOpenAI(ChromaDB_VectorStore, OpenAI_Chat):
     def __init__(self, config=None):
         ChromaDB_VectorStore.__init__(self, config=config)
@@ -97,10 +95,10 @@ class MyVannaAnthropic(ChromaDB_VectorStore, Anthropic_Chat):
         ChromaDB_VectorStore.__init__(self, config=config)
         Anthropic_Chat.__init__(self, config=config)
 
-# class MyVannaBedrock(ChromaDB_VectorStore, Bedrock_Converse):
-#     def __init__(self, config=None):
-#         ChromaDB_VectorStore.__init__(self, config=config)
-#         Bedrock_Converse.__init__(self, config=config)
+class MyVannaBedrock(ChromaDB_VectorStore, Bedrock_Converse):
+    def __init__(self, config=None):
+        ChromaDB_VectorStore.__init__(self, config=config)
+        Bedrock_Converse.__init__(self, config=config)
 
 class MyVannaOllama(ChromaDB_VectorStore, Ollama):
     def __init__(self, config=None):

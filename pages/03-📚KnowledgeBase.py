@@ -4,7 +4,7 @@ st.set_page_config(layout="wide")
 st.header(f"{STR_MENU_TRAIN} 📚")
 
 def main():
-    cfg_data = db_query_config()
+    cfg_data = db_current_cfg()
     
     vn = setup_vanna_cached(cfg_data)
 

@@ -74,7 +74,7 @@ def db_upsert_cfg(data):
         # print(sql_script)
         db_run_sql(sql_script, _conn)
 
-def get_config_data(LIMIT=10):
+def db_get_cfg_data(LIMIT=10):
     with DBConn() as _conn:
         sql_stmt = f"""
             select 
@@ -86,9 +86,23 @@ def get_config_data(LIMIT=10):
         """
         # print(sql_stmt)
         return pd.read_sql(sql_stmt, _conn)
-
+      
 def main():
-    cfg_data = db_query_config()
+    db_type = "SQLite"
+    avail_dbs = list_datasets(db_type)
+    try:
+        cfg_data = db_current_cfg()
+    except Exception as e:
+        print(str(e))
+    if not cfg_data:
+        cfg_data = {
+            "vector_db": "chromadb",
+            "llm_vendor": "Alibaba",
+            "llm_model": "qwen2.5-coder:latest",
+            "db_type": db_type,
+            "db_url": avail_dbs[0],
+        }
+
     # st.write(cfg_data)
     st.markdown(f"""
     ##### Data Base
@@ -106,7 +120,6 @@ def main():
             )
 
         with c2:
-            avail_dbs = list_datasets(db_type)
             db_url = st.selectbox(
                 "DB URL",
                 options=avail_dbs,
@@ -150,10 +163,24 @@ def main():
         )
         db_upsert_cfg(cfg_data)
 
+    with st.expander("Show Config Data:", expanded=False):
+        data = db_get_cfg_data()
+        st.dataframe(data)
+
+def create_tables():
+    # run a test query
+    try:
+        db_get_row_count(table_name=CFG["TABLE_CONFIG"])
+    except Exception as e:
+        ddl_script = open(CFG["DDL_SCRIPT"]).read()
+        print(ddl_script)
+        with DBConn() as _conn:
+            db_run_sql(ddl_script, _conn)
 
 if __name__ == '__main__':
+    # create tables if missing
+    create_tables()
+    
     main()
 
-    with st.expander("Show Config Data:", expanded=False):
-        data = get_config_data()
-        st.dataframe(data)
+
