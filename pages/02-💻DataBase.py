@@ -34,12 +34,10 @@ def _execute_code_sql(code):
             cur.executescript(code)
             _conn.commit()
 
-def main():
-
+def do_database():
 
     st.markdown(f"""
     #### SQL Editor
-    Current DB NAME: {DB_NAME}  [URL = {DB_URL}]
     """, unsafe_allow_html=True)    
 
     tables = db_list_tables_sqlite(DB_URL)
@@ -72,6 +70,15 @@ def main():
         st.image("./docs/sqlite-sample-database-chinook.jpg")
 
 
+## sidebar Menu
+def do_sidebar():
+    with st.sidebar:
+        with st.expander("Show Configuration", expanded=False):
+            cfg_show_data(cfg_data)
+
+def main():
+    do_sidebar()
+    do_database()
 
 if __name__ == '__main__':
     main()

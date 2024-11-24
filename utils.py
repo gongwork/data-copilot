@@ -60,10 +60,10 @@ VANNA_ICON_URL  = "https://cdn-icons-png.flaticon.com/128/13298/13298257.png"
 
 STR_APP_NAME             = "Data Copilot"
 STR_MENU_HOME            = "Home"
-STR_MENU_ASK             = "Ask AI"
+STR_MENU_ASK_RAG         = "Retrieval Augmented Generation"
 STR_MENU_EVAL            = "Evaluation"
 STR_MENU_IMPORT_DATA     = "Import Data"
-STR_MENU_CONFIG          = "Experiment Setup"
+STR_MENU_CONFIG          = "Settings"
 STR_MENU_TRAIN           = "KnowledgeBase"
 STR_MENU_DB              = "DataBase"
 STR_MENU_RESULT          = "Q & A Results"
@@ -436,8 +436,16 @@ def db_query_data(db_url, table_name, limit=50, order_by=""):
         """
         return pd.read_sql(sql_stmt, _conn)
 
-def db_current_cfg():
-    with DBConn(CFG["DB_META_DATA"]) as _conn:
+def db_current_cfg(id_config=""):
+    if id_config:
+        sql_stmt = f"""
+            select 
+                *
+            from t_config
+            where id = '{id_config}'
+            ;
+        """
+    else:
         sql_stmt = f"""
             select 
                 *
@@ -448,7 +456,9 @@ def db_current_cfg():
             limit 1
             ;
         """
-        # print(sql_stmt)
+    # print(sql_stmt)
+
+    with DBConn(CFG["DB_META_DATA"]) as _conn:
         df = pd.read_sql(sql_stmt, _conn)
     if df is None or df.empty:
         # st.error("Config is missing")
@@ -1120,3 +1130,14 @@ def merge_single_col(data):
     for d in ds:
         break
     return d
+
+
+def gen_markdown_text(data, keys=["llm_vendor","llm_model","vector_db","db_type","db_name","db_url"]):
+    table = "| Param | Value |\n|-----|-------|\n"
+    table += "\n".join([f"| {k} | {v} |" for k,v in data.items() if k in keys])
+    return table
+
+def cfg_show_data(data):
+    config_table_md = gen_markdown_text(data)
+    st.markdown(config_table_md, unsafe_allow_html=True) 
+

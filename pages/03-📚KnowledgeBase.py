@@ -3,14 +3,15 @@ from utils import *
 st.set_page_config(layout="wide")
 st.header(f"{STR_MENU_TRAIN} 📚")
 
-def main():
-    cfg_data = db_current_cfg()
-    DB_NAME = cfg_data.get("db_name")
-    DB_URL = cfg_data.get("db_url")    
+cfg_data = db_current_cfg()
+DB_NAME = cfg_data.get("db_name")
+DB_URL = cfg_data.get("db_url")    
+# st.write(DB_NAME, DB_URL)
+
+def do_knowledgebase():
     
     vn = setup_vanna_cached(cfg_data)
 
-    st.write(DB_NAME, DB_URL)
     with st.expander("Add Schema", expanded=True):
         c1, c2 = st.columns([2,2])
         with c1:
@@ -88,8 +89,15 @@ def main():
         if df is not None and not df.empty:
             st.dataframe(df)
 
+## sidebar Menu
+def do_sidebar():
+    with st.sidebar:
+        with st.expander("Show Configuration", expanded=False):
+            cfg_show_data(cfg_data)
 
-
+def main():
+    do_sidebar()
+    do_knowledgebase()
 
 if __name__ == '__main__':
     main()

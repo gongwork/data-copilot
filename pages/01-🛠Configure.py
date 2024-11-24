@@ -90,8 +90,8 @@ def db_get_cfg_data(LIMIT=20):
         """
         # print(sql_stmt)
         return pd.read_sql(sql_stmt, _conn)
-      
-def main():
+
+def do_config():
     db_type = "SQLite"
     avail_dbs = list_datasets(db_type)
     # st.write(avail_dbs)
@@ -185,8 +185,18 @@ def main():
         data = db_get_cfg_data()
         st.dataframe(data)
 
-if __name__ == '__main__':
-    
+## sidebar Menu
+def do_sidebar():
+    with st.sidebar:
+        with st.expander("Show Configuration", expanded=False):
+            cfg_data = db_current_cfg()
+            cfg_show_data(cfg_data)
+
+def main():
+    do_sidebar()
+    do_config()
+
+if __name__ == '__main__':   
     main()
 
 

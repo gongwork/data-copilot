@@ -13,7 +13,7 @@ from vanna_calls import (
 
 
 st.set_page_config(layout="wide")
-st.header(f"{STR_MENU_ASK} ❓")
+st.header(f"{STR_MENU_ASK_RAG} ❓")
 
 TABLE_NAME = CFG["TABLE_QA"]
 KEY_PREFIX = f"col_{TABLE_NAME}"
@@ -24,7 +24,7 @@ DB_URL = cfg_data.get("db_url")
 
 sample_questions = {
     "chinook" : f"""
-        #### Sample prompts for Chinook dataset
+        #### Sample prompts for "Chinook" dataset
         - List all the tables
         - What tables store order information? Hint: table_name is stored in column called "name" from table called sqlite_master
         - Find top 5 customers by sales
@@ -36,7 +36,7 @@ sample_questions = {
         """,
 
     "movie" : f"""
-        #### Sample prompts for Movie dataset
+        #### Sample prompts for "Movie" dataset
         - What are the tables in the movie database
         - what are the top 5 movies with highest budget? use bar chart to visualize data
         - how many movies are there
@@ -48,38 +48,25 @@ sample_questions = {
         see [kaggle IMDB notebook](https://www.kaggle.com/code/priy998/imdb-sqlite/notebook)
         """,
 
+    "company_rank" : f"""
+        #### Sample prompts for "Company Ranks" dataset
+        - What are the tables in this database
+        - what are the top 10 companies by market cap in United States
+        - how many companies are there in United States
+        - Show me the key financial data for the top 5 companies from China
+
+        see [kaggle](https://www.kaggle.com/datasets/patricklford/largest-companies-analysis-worldwide)
+        """,
+
 }
 
-## sidebar Menu
-def do_sidebar():
-    with st.sidebar:
-        with st.expander("Output Settings", expanded=False):
 
-            st.checkbox("Show SQL Query", value=True, key="show_sql")
-            st.checkbox("Show Dataframe", value=True, key="show_table")
-            st.checkbox("Show Python Code", value=True, key="show_plotly_code")
-            st.checkbox("Show Plotly Chart", value=True, key="show_chart")
-            st.checkbox("Show Summary", value=False, key="show_summary")
-            # st.checkbox("Show Follow-up Questions", value=False, key="show_followup")
-
-            st.checkbox("Debug", value=False, key="debug_ask_ai")
-
-            # st.button("Reset", on_click=lambda: reset_my_state(), use_container_width=True)
-
-        sample_q = ""
-        for db_name in sample_questions.keys():
-            if db_name in DB_URL:
-                sample_q = sample_questions.get(db_name,"")
-
-        if sample_q:
-            st.markdown(sample_q, unsafe_allow_html=True)  
-
- 
-def db_insert_qa_result(qa_data):
+def db_insert_qa_result(qa_data, enable_feedback=True):
     """Insert Q&A results to DB 
     """
     id_config = qa_data.get("id_config")
-    question = escape_single_quote(qa_data.get("my_question"))
+    my_question = qa_data.get("my_question")
+    question = escape_single_quote(my_question)
     answer = qa_data.get("my_answer")
 
     my_sql = answer.get("my_sql", {})
@@ -140,15 +127,19 @@ def db_insert_qa_result(qa_data):
         # print(sql_script)
         db_run_sql(sql_script, _conn)
 
+    # add to knowledge-base
+    if st.session_state.get("out_allow_feedback", True) and sql_is_valid == "Y" and my_question and sql_generated:
+        cfg_data = db_current_cfg(id_config)
+        db_name = cfg_data.get("db_name")
+        vn = setup_vanna_cached(cfg_data)
+        result = vn.train(question=my_question, sql=sql_generated, dataset=db_name)
+        st.success(f"Feedback is added to knowledgebase [id = {result}]")        
+
 def ask_ai():
     """ Ask Vanna.AI questions
 
-    TODO 
     """
     # create Vanna instance
-    cfg_data = db_current_cfg()
-    if st.session_state.get("debug_ask_ai", False):
-        st.write(cfg_data)
 
     # st.image(VANNA_ICON_URL)
     my_answer = {}
@@ -193,7 +184,7 @@ def ask_ai():
                 st.write(my_answer)
             return
 
-        if st.session_state.get("show_sql", True):
+        if st.session_state.get("out_show_sql", True):
             assistant_message_sql = st.chat_message(
                 "assistant", avatar=VANNA_ICON_URL
             )
@@ -206,7 +197,7 @@ def ask_ai():
         my_answer.update({"my_df":{"data":my_df, "ts_delta": ts_delta}})
 
         if my_df is not None:
-            if st.session_state.get("show_table", True):
+            if st.session_state.get("out_show_table", True):
                 assistant_message_table = st.chat_message(
                     "assistant",
                     avatar=VANNA_ICON_URL,
@@ -221,7 +212,7 @@ def ask_ai():
                 ts_delta = f"{(ts_stop-ts_start):.2f}"
                 my_answer.update({"my_plot":{"data":my_plot, "ts_delta": ts_delta}})
 
-                if st.session_state.get("show_plotly_code", False):
+                if st.session_state.get("out_show_plotly_code", False):
                     assistant_message_plotly_code = st.chat_message(
                         "assistant",
                         avatar=VANNA_ICON_URL,
@@ -231,7 +222,7 @@ def ask_ai():
                     )
 
                 if my_plot is not None and my_plot != "":
-                    if st.session_state.get("show_chart", True):
+                    if st.session_state.get("out_show_chart", True):
                         assistant_message_chart = st.chat_message(
                             "assistant",
                             avatar=VANNA_ICON_URL,
@@ -244,13 +235,13 @@ def ask_ai():
                             assistant_message_chart.error("I couldn't generate a chart")
 
             # display summary
-            ts_start = time()
-            my_summary = generate_summary_cached(cfg_data, question=my_question, df=my_df)
-            ts_stop = time()
-            ts_delta = f"{(ts_stop-ts_start):.2f}"
-            my_answer.update({"my_summary":{"data":my_summary, "ts_delta": ts_delta}})
-            if my_summary is not None and my_summary != "":
-                if st.session_state.get("show_summary", True):
+            if st.session_state.get("out_show_summary", True):
+                ts_start = time()
+                my_summary = generate_summary_cached(cfg_data, question=my_question, df=my_df)
+                ts_stop = time()
+                ts_delta = f"{(ts_stop-ts_start):.2f}"
+                my_answer.update({"my_summary":{"data":my_summary, "ts_delta": ts_delta}})
+                if my_summary is not None and my_summary != "":
                     assistant_message_summary = st.chat_message(
                         "assistant",
                         avatar=VANNA_ICON_URL,
@@ -267,6 +258,34 @@ def ask_ai():
 
         db_insert_qa_result(qa_data)
 
+## sidebar Menu
+def do_sidebar():
+    with st.sidebar:
+        with st.expander("Show Configuration", expanded=False):
+            # st.write(cfg_data)
+            cfg_show_data(cfg_data)
+
+        with st.expander("Output Settings", expanded=False):
+            st.checkbox("Show SQL Query", value=True, key="out_show_sql")
+            st.checkbox("Show Dataframe", value=True, key="out_show_table")
+            st.checkbox("Show Python Code", value=True, key="out_show_plotly_code")
+            st.checkbox("Show Plotly Chart", value=True, key="out_show_chart")
+            st.checkbox("Show Summary", value=False, key="out_show_summary")
+            # st.checkbox("Show Follow-up Questions", value=False, key="show_followup")
+
+            st.checkbox("Allow Feedback", value=True, key="out_allow_feedback")
+
+            st.checkbox("Debug", value=False, key="debug_ask_ai")
+
+            # st.button("Reset", on_click=lambda: reset_my_state(), use_container_width=True)
+
+        sample_q = ""
+        for db_name in sample_questions.keys():
+            if db_name in DB_URL:
+                sample_q = sample_questions.get(db_name,"")
+
+        if sample_q:
+            st.markdown(sample_q, unsafe_allow_html=True)  
 
 def main():
     do_sidebar()
