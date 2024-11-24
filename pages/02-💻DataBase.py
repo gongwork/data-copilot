@@ -4,7 +4,25 @@ st.set_page_config(layout="wide")
 st.header(f"{STR_MENU_DB} 💻")
 
 cfg_data = db_current_cfg()
+DB_NAME = cfg_data.get("db_name")
 DB_URL = cfg_data.get("db_url")
+
+db_info = {
+    "chinook": f"""  
+    ##### <span style="color: blue;">Chinook music store </span>
+    https://www.sqlitetutorial.net/sqlite-sample-database/
+    """,
+
+    "movie": f"""
+    ##### <span style="color: blue;">Movies DB</span>
+    https://pypi.org/project/imdb-sqlite/
+    """,
+
+    "company_rank": f"""
+    ##### <span style="color: blue;">World Top Company Ranks</span>
+    https://www.kaggle.com/datasets/patricklford/largest-companies-analysis-worldwide
+    """,
+}
 
 def _execute_code_sql(code):
     with DBConn(DB_URL) as _conn:
@@ -21,7 +39,7 @@ def main():
 
     st.markdown(f"""
     #### SQL Editor
-    Current DB URL = {DB_URL}
+    Current DB NAME: {DB_NAME}  [URL = {DB_URL}]
     """, unsafe_allow_html=True)    
 
     tables = db_list_tables_sqlite(DB_URL)
@@ -47,20 +65,11 @@ def main():
             st.error(format_exc())
 
 
-    st.markdown(f"""
-    #### Datasets
-    
-    ##### <span style="color: blue;">Chinook music store </span>
-    https://www.sqlitetutorial.net/sqlite-sample-database/
-    """, unsafe_allow_html=True)    
+    st.subheader("Dataset info")
+    st.markdown(db_info.get(DB_NAME), unsafe_allow_html=True)    
 
-    st.image("./docs/sqlite-sample-database-chinook.jpg")
-
-    st.markdown(f"""
-    ##### <span style="color: blue;">ImDB movies </span>
-    https://pypi.org/project/imdb-sqlite/
-    """, unsafe_allow_html=True)    
-
+    if DB_NAME == "chinook":
+        st.image("./docs/sqlite-sample-database-chinook.jpg")
 
 
 

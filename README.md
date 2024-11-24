@@ -24,6 +24,29 @@ open browser at URL: http://localhost:8501
 [Data Copilot for Self-Service Analytics](https://www.youtube.com/watch?v=RKSlUAFmbaM)
 
 
+
+## GPU selection
+see [Ollama GPU docs](https://github.com/ollama/ollama/blob/main/docs%2Fgpu.md)
+
+```
+nvidia-smi      # see GPU memory info
+nvidia-smi -L   # see GPU UUID
+```
+
+### GPU Suspend/Resume
+After Linux suspect, sometimes Ollama will fail to discover your NVIDIA GPU, and fallback to running on the CPU.
+
+To workaround this driver bug by reloading the NVIDIA UVM driver with 
+```
+sudo rmmod nvidia_uvm && sudo modprobe nvidia_uvm
+```
+
+To off-load all models in use, restart ollama service
+```
+sudo systemctl restart ollama
+nvidia-smi      # see GPU memory info
+```
+
 ## AWS Bedrock
 
 ### quick start

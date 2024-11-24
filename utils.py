@@ -13,6 +13,7 @@ from glob import glob
 from traceback import format_exc
 from pathlib import Path
 from uuid import uuid4
+import json
 import jsonlines
 
 # special libs
@@ -61,6 +62,7 @@ STR_APP_NAME             = "Data Copilot"
 STR_MENU_HOME            = "Home"
 STR_MENU_ASK             = "Ask AI"
 STR_MENU_EVAL            = "Evaluation"
+STR_MENU_IMPORT_DATA     = "Import Data"
 STR_MENU_CONFIG          = "Experiment Setup"
 STR_MENU_TRAIN           = "KnowledgeBase"
 STR_MENU_DB              = "DataBase"
@@ -217,12 +219,21 @@ def trim_str_col_val(data):
     return data_new
 
 def list_datasets(db_type="SQLite"):
-    db_name = db_type.lower()
-    db_path = []
+    """
+    traverse db subfolder to get all db files
+
+    Returns:
+        dict of datasets
+    """
+    sufix = db_type.lower()
+    datasets = {}
     cwd = os.getcwd()
-    for p in [i for i in glob(f"db/**/*.{db_name}*", recursive=True) if "data_copilot" not in i and db_name in i.lower()]:
-        db_path.append(os.path.abspath(os.path.join(cwd, p)))
-    return db_path
+    for p in [i for i in glob(f"db/**/*.{sufix}*", recursive=True) if "data_copilot" not in i and sufix in i.lower()]:
+        db_url = os.path.abspath(os.path.join(cwd, p))
+        l = Path(db_url).parts
+        db_name = l[l.index("db")+1]
+        datasets[db_name] = dict(db_type=db_type, db_url=db_url)
+    return datasets
 
 #############################
 #  DB Helpers
@@ -440,7 +451,7 @@ def db_current_cfg():
         # print(sql_stmt)
         df = pd.read_sql(sql_stmt, _conn)
     if df is None or df.empty:
-        st.error("Config is missing")
+        # st.error("Config is missing")
         return {}
     
     return df.to_dict("records")[0]

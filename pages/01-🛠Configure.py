@@ -14,6 +14,7 @@ def db_upsert_cfg(data):
     llm_model=data.get("llm_model")
     vector_db=data.get("vector_db")
     db_type=data.get("db_type")
+    db_name=data.get("db_name", "default")
     db_url=data.get("db_url")
     with DBConn() as _conn:
         sql_stmt = f"""
@@ -25,6 +26,7 @@ def db_upsert_cfg(data):
                 and llm_model='{llm_model}'
                 and vector_db='{vector_db}'
                 and db_type='{db_type}'
+                and db_name='{db_name}'
                 and db_url='{db_url}'
                 and is_active='Y'
             order by ts desc
@@ -45,6 +47,7 @@ def db_upsert_cfg(data):
                     llm_vendor,
                     llm_model,
                     db_type,
+                    db_name,
                     db_url,
                     created_ts,
                     ts,
@@ -55,6 +58,7 @@ def db_upsert_cfg(data):
                     '{llm_vendor}',
                     '{llm_model}',
                     '{db_type}',
+                    '{db_name}',
                     '{db_url}',
                     '{curr_ts}',
                     '{curr_ts}',
@@ -74,7 +78,7 @@ def db_upsert_cfg(data):
         # print(sql_script)
         db_run_sql(sql_script, _conn)
 
-def db_get_cfg_data(LIMIT=10):
+def db_get_cfg_data(LIMIT=20):
     with DBConn() as _conn:
         sql_stmt = f"""
             select 
@@ -90,17 +94,25 @@ def db_get_cfg_data(LIMIT=10):
 def main():
     db_type = "SQLite"
     avail_dbs = list_datasets(db_type)
+    # st.write(avail_dbs)
     try:
         cfg_data = db_current_cfg()
     except Exception as e:
         print(str(e))
     if not cfg_data:
+        db_name = "chinook"
+        db_info = avail_dbs.get(db_name, {})
+        if not db_info:
+            st.error(f"Missing dataset {db_name}")
+            return 
+        
         cfg_data = {
             "vector_db": "chromadb",
             "llm_vendor": "Alibaba",
             "llm_model": "qwen2.5-coder:latest",
-            "db_type": db_type,
-            "db_url": avail_dbs[0],
+            "db_type": db_info.get("db_type"),
+            "db_name": db_name,
+            "db_url": db_info.get("db_url"),
         }
 
     # st.write(cfg_data)
@@ -111,19 +123,24 @@ def main():
     
     with st.expander("Specify data source: (default - SQLite)", expanded=True):
         db_list = sorted(SQL_DIALECTS)
-        c1, c2 = st.columns([2,6])
+        c1, c2, c3 = st.columns([2,2,6])
         with c1:
+            db_name = st.selectbox(
+                "DB Name",
+                options=avail_dbs.keys(),
+                index=list(avail_dbs.keys()).index(cfg_data.get("db_name"))
+            )
+        with c2:
             db_type = st.selectbox(
                 "DB Type",
                 options=db_list,
                 index=db_list.index(cfg_data.get("db_type"))
             )
-
-        with c2:
-            db_url = st.selectbox(
+        with c3:
+            db_url = st.text_input(
                 "DB URL",
-                options=avail_dbs,
-                index=avail_dbs.index(cfg_data.get("db_url"))
+                value=avail_dbs[db_name].get("db_url"),
+                disabled=True
             )
 
     st.markdown(f"""
@@ -159,6 +176,7 @@ def main():
             llm_model=llm_model, 
             vector_db=vector_db, 
             db_type=db_type, 
+            db_name=db_name, 
             db_url=db_url
         )
         db_upsert_cfg(cfg_data)
@@ -167,19 +185,7 @@ def main():
         data = db_get_cfg_data()
         st.dataframe(data)
 
-def create_tables():
-    # run a test query
-    try:
-        db_get_row_count(table_name=CFG["TABLE_CONFIG"])
-    except Exception as e:
-        ddl_script = open(CFG["DDL_SCRIPT"]).read()
-        print(ddl_script)
-        with DBConn() as _conn:
-            db_run_sql(ddl_script, _conn)
-
 if __name__ == '__main__':
-    # create tables if missing
-    create_tables()
     
     main()
 

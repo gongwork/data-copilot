@@ -54,4 +54,16 @@ https://www.youtube.com/watch?v=RKSlUAFmbaM
 https://github.com/gongwork/data-copilot
 """, unsafe_allow_html=True)
 
-
+def create_tables():
+    # run a test query
+    try:
+        db_get_row_count(table_name=CFG["TABLE_CONFIG"])
+    except Exception as e:
+        ddl_script = open(CFG["DDL_SCRIPT"]).read()
+        print(ddl_script)
+        with DBConn() as _conn:
+            db_run_sql(ddl_script, _conn)
+            
+if __name__ == '__main__':
+    # create tables if missing
+    create_tables()

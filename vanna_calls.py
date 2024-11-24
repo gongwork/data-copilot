@@ -208,8 +208,8 @@ def generate_summary_cached(cfg_data, question, df):
     vn = setup_vanna_cached(cfg_data)
     return vn.generate_summary(question=question, df=df)
 
-def show_training_data_cached(cfg_data):
-    vn = setup_vanna_cached(cfg_data)
-    return vn.get_training_data()
+# def show_training_data_cached(cfg_data):
+#     vn = setup_vanna_cached(cfg_data)
+#     return vn.get_training_data()
 
 

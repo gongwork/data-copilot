@@ -42,6 +42,7 @@ CREATE TABLE if not exists t_config
 	, llm_vendor text
 	, llm_model text
 	, db_type text
+	, db_name text   -- logic dataset name
 	, db_url text
 
 	, note text
