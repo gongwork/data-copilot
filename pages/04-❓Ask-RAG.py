@@ -53,7 +53,8 @@ sample_questions = {
         - What are the tables in this database
         - what are the top 10 companies by market cap in United States
         - how many companies are there in United States
-        - Show me the key financial data for the top 5 companies from China
+        - Show me the key financial data for the top 5 companies
+        - Show me the key financial data for the top 5 companies from Europe
 
         see [kaggle](https://www.kaggle.com/datasets/patricklford/largest-companies-analysis-worldwide)
         """,

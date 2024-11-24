@@ -1,7 +1,11 @@
-from utils import *
+import streamlit as st
+import os
+import sqlite3
+import pandas as pd
+from pathlib import Path
 
 st.set_page_config(layout="wide")
-st.subheader(f"{STR_MENU_IMPORT_DATA} 📥")
+st.header(f"Import SQLite 📥")
 
 def get_all_tables(db_path):
     """Get list of all tables in SQLite database."""
@@ -33,8 +37,8 @@ def preview_table(db_path, table_name):
         st.error(f"Error previewing table {table_name}: {str(e)}")
         return None
 
-def sqlite_import_tool():
-    st.header("SQlite Import Tool")
+def main():
+    st.title("SQLite Import Tool")
     DB_LOADED = False
 
     # Section 1: Upload SQLite
@@ -95,9 +99,7 @@ def sqlite_import_tool():
         tables = get_all_tables(save_path)
         
         if tables:
-            st.success(f"Imported {len(tables)} tables:")
-            tab_list = ',\t '.join(tables)
-            st.info(f"{tab_list}")
+            st.write(f"Imported {len(tables)} tables: {', '.join(tables)}")
             
             # Preview each table
             for table in tables:
@@ -109,10 +111,6 @@ def sqlite_import_tool():
                         st.caption(f"Columns: {', '.join(df.columns)}")
         else:
             st.warning("No tables found in database")
-
-
-def main():
-    sqlite_import_tool()
 
 if __name__ == "__main__":
     main()
