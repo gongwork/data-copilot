@@ -5,10 +5,10 @@ from vanna.ollama import Ollama
 from vanna.google import GoogleGeminiChat
 from vanna.openai import OpenAI_Chat
 from vanna.anthropic import Anthropic_Chat
-from vanna.bedrock import Bedrock_Converse
+from vanna.bedrock import Bedrock_Converse, Bedrock_Chat
 from vanna.chromadb.chromadb_vector import ChromaDB_VectorStore
 
-
+import boto3
 
 # from api_key_store import ApiKeyStore
 import os
@@ -98,10 +98,10 @@ class MyVannaAnthropic(ChromaDB_VectorStore, Anthropic_Chat):
         ChromaDB_VectorStore.__init__(self, config=config)
         Anthropic_Chat.__init__(self, config=config)
 
-class MyVannaBedrock(ChromaDB_VectorStore, Bedrock_Converse):
+class MyVannaBedrockChat(ChromaDB_VectorStore, Bedrock_Chat):
     def __init__(self, config=None):
         ChromaDB_VectorStore.__init__(self, config=config)
-        Bedrock_Converse.__init__(self, config=config)
+        Bedrock_Chat.__init__(self, config=config)
 
 class MyVannaOllama(ChromaDB_VectorStore, Ollama):
     def __init__(self, config=None):
@@ -126,32 +126,40 @@ def setup_vanna(llm_vendor,llm_model,vector_db,db_type,db_url):
         st.error(f"Unsupported vector_db: {vector_db}")
         return None
 
-    llm_api_key = lookup_llm_api_key(llm_model, llm_vendor)
-    if not llm_api_key:
-        st.error(f"Missing llm_api_key")
-        return None
-
-    elif llm_api_key == "OLLAMA":
+    if llm_vendor == "AWS":  
+        model_name = "anthropic.claude-3-sonnet-20240229-v1:0"
         config = {
-            'model': llm_model,  # 'llama3' 
+            "modelId": model_name,
+            "dialect": "SQLite",
         }
-        vn = MyVannaOllama(config=config)
+        bedrock_client = boto3.client(service_name="bedrock-runtime")
+        vn = MyVannaBedrockChat(client=bedrock_client, config=config)
     else:
-        config = {
-            'api_key': llm_api_key, 
-            'model': llm_model,  # 'llama3' 
-        }
-        if llm_vendor == "OpenAI":  
-            vn = MyVannaOpenAI(config=config)
-        elif llm_vendor == "Google":  
-            vn = MyVannaGoogle(config=config)
-        elif llm_vendor == "Anthropic":  
-            vn = MyVannaAnthropic(config=config)
-        # elif llm_vendor == "AWS":  
-        #     vn = MyVannaBedrock(config=config)
-        else:
-            st.error(f"Unsupported LLM vendor: {llm_vendor}")
+
+        llm_api_key = lookup_llm_api_key(llm_model, llm_vendor)
+        if not llm_api_key:
+            st.error(f"Missing llm_api_key")
             return None
+
+        elif llm_api_key == "OLLAMA":
+            config = {
+                'model': llm_model,  # 'llama3' 
+            }
+            vn = MyVannaOllama(config=config)
+        else:
+            config = {
+                'api_key': llm_api_key, 
+                'model': llm_model,  # 'llama3' 
+            }
+            if llm_vendor == "OpenAI":  
+                vn = MyVannaOpenAI(config=config)
+            elif llm_vendor == "Google":  
+                vn = MyVannaGoogle(config=config)
+            elif llm_vendor == "Anthropic":  
+                vn = MyVannaAnthropic(config=config)
+            else:
+                st.error(f"Unsupported LLM vendor: {llm_vendor}")
+                return None
 
     vn.connect_to_sqlite(db_url)
 

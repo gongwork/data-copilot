@@ -19,3 +19,4 @@ mistralai
 anthropic
 google-generativeai
 boto3
+openpyxl>=3.1.0
