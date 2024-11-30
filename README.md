@@ -49,13 +49,12 @@ Import data from CSV or connect to database
 
 ## Setup
 
-prepare `.env` file (see `.env.example`) by setting API_KEY for the LLM providor of choice.
-
 ```
 conda create -n data_copilot python=3.11
 conda activate data_copilot
 pip install -r requirements.txt 
 cd src
+cp .env.example .env   # add API_KEY in .env
 streamlit run Data-Copilot.py
 ```
 
