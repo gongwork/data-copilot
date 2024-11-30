@@ -48,7 +48,7 @@ prepare `.env` file (see `.env.example`) by setting API_KEY for the LLM providor
 conda create -n data_copilot python=3.11
 conda activate data_copilot
 pip install -r requirements.txt 
-
+cd src
 streamlit run Data-Copilot.py
 ```
 

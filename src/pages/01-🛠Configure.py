@@ -223,7 +223,7 @@ def do_config():
 
     with st.expander("Specify LLM model: (default - Alibaba QWen 2.5 Coder) ", expanded=True):
         ollama_link = """
-        <span style="color: red;"><a href=https://ollama.com/search>Ollama</a></span> is required to run open-source LLM models (with '(Open)'-suffix)
+        <span style="color: red;"><a href=https://ollama.com/search>Ollama</a></span> is required to run open-source LLM models (suffix = '(Open)')
         """
         st.markdown(ollama_link, unsafe_allow_html=True)
         llm_model_name = LLM_MODEL_REVERSE_MAP.get(cfg_data.get("llm_model"), DEFAULT_LLM_MODEL)
