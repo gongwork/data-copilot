@@ -8,12 +8,32 @@ An streamlit app built for data professionals, powered by [vanna.ai](https://git
 ## Features
 
 ### Configure
-
+Choose data source, vector store, LLM model
 ![configure](https://github.com/gongwork/data-copilot/blob/main/docs/p1-config.png)
 
 
-### 
+### Database
+Review database schema, data
+![database](https://github.com/gongwork/data-copilot/blob/main/docs/p2-database.png)
 
+
+### Knowledge Base
+Define knowledge base with table schema and documentation
+![knowledgebase](https://github.com/gongwork/data-copilot/blob/main/docs/p3-knowledgebase.png)
+
+### Ask AI
+Ask question on data (built on RAG), get answer in SQL, dataframe, python, plotly chart
+![rag1](https://github.com/gongwork/data-copilot/blob/main/docs/p4-rag-1.png)
+
+![rag2](https://github.com/gongwork/data-copilot/blob/main/docs/p4-rag-2.png)
+
+### Results
+Question & answer pairs are saved to database
+![results](https://github.com/gongwork/data-copilot/blob/main/docs/p5-results.png)
+
+### Import Tools
+Import data from CSV or connect to database
+![import](https://github.com/gongwork/data-copilot/blob/main/docs/p9-import-sqlite.png)
 
 ## Setup
 
