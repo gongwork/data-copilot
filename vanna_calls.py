@@ -1,6 +1,7 @@
 import streamlit as st
 # from vanna.remote import VannaDefault
 
+
 from vanna.ollama import Ollama
 from vanna.google import GoogleGeminiChat
 from vanna.openai import OpenAI_Chat
@@ -34,13 +35,13 @@ LLM_MODEL_MAP = {
     "Alibaba QWen 2.5 (Open)": 'qwen2.5:latest',
     "CodeGeeX4 (Open)": 'codegeex4:latest',
     "DeepSeek Coder v2 (Open)": 'deepseek-coder-v2:latest',
-    "Meta Llama 3.1 (Open)": 'llama3.1',
-    "Meta Llama 3 (Open)": 'llama3',
-    "Microsoft Phi 3.5 (Open)": 'phi3.5',
+    "Meta Llama 3.1 (Open)": 'llama3.1:latest',
+    "Meta Llama 3 (Open)": 'llama3:latest',
+    "Microsoft Phi 3.5 (Open)": 'phi3.5:latest',
     "Google Gemma2 (Open)": 'gemma2:latest',
-    "Google CodeGemma (Open)": 'codegemma',
-    "Mistral (Open)": 'mistral',
-    "Mistral Nemo(Open)": 'mistral-nemo',
+    "Google CodeGemma (Open)": 'codegemma:latest',
+    "Mistral (Open)": 'mistral:latest',
+    "Mistral Nemo(Open)": 'mistral-nemo:latest',
 }
 
 LLM_MODEL_REVERSE_MAP = {v:k for k, v in LLM_MODEL_MAP.items()}
@@ -222,5 +223,15 @@ def generate_summary_cached(cfg_data, question, df):
 # def show_training_data_cached(cfg_data):
 #     vn = setup_vanna_cached(cfg_data)
 #     return vn.get_training_data()
+
+@st.cache_data
+def get_ollama_model_names():
+    model_names = []
+    try:
+        import ollama
+        model_names = [m.model for m in ollama.list().models]
+    except Exception as e:
+        print("Failed to get Ollama models")
+    return model_names
 
 

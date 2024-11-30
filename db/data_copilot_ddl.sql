@@ -44,12 +44,22 @@ CREATE TABLE if not exists t_config
 	, db_type text
 	, db_name text   -- logic dataset name
 	, db_url text
+	, db_instance text
+	, db_username text
+	, db_password text
 
 	, note text
 	, created_ts text
 	, ts text
 	, is_active text  DEFAULT 'Y'
 );
+
+/* 
+select * from t_config;
+alter table t_config add column db_instance text;
+alter table t_config add column db_username text;
+alter table t_config add column db_password text;
+*/
 
 -- drop table t_note;
 CREATE TABLE if not exists t_note

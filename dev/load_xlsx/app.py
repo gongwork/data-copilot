@@ -46,7 +46,7 @@ def add_download_buttons(dataset_name):
     try:
         col1, col2 = st.columns(2)
         
-        ddl_path = f"db/{dataset_name}_ddl.sql"
+        ddl_path = f"db/{dataset_name}/{dataset_name}_ddl.sql"
         if os.path.exists(ddl_path):
             with open(ddl_path, 'r') as f:
                 ddl_content = f.read()
@@ -57,7 +57,7 @@ def add_download_buttons(dataset_name):
                 mime="text/plain"
             )
         
-        db_path = f"db/{dataset_name}.sqlite3"
+        db_path = f"db/{dataset_name}/{dataset_name}.sqlite3"
         if os.path.exists(db_path):
             with open(db_path, 'rb') as f:
                 db_content = f.read()
@@ -100,6 +100,7 @@ def create_sqlite_ddl(df, table_name, sheet_name, column_mapping, ignored_column
 
 def main():
     st.title("Excel Sheet Import Tool")
+    dataset_name = ""
     
     # Initialize session state
     if 'sheets_data' not in st.session_state:
@@ -249,7 +250,7 @@ def main():
         st.code(ddl_content, language="sql")
 
         try:
-            ddl_path = f"db/{dataset_name}_ddl.sql"
+            ddl_path = f"db/{dataset_name}/{dataset_name}_ddl.sql"
             with open(ddl_path, "w", encoding='utf-8') as f:
                 f.write(ddl_content)
             st.success(f"DDL saved to: '{ddl_path}'")
@@ -257,7 +258,7 @@ def main():
             st.error(f"Error saving DDL file: {str(e)}")
         
         if st.button("Create Tables"):
-            db_path = f"db/{dataset_name}.sqlite3"
+            db_path = f"db/{dataset_name}/{dataset_name}.sqlite3"
             conn = None
             try:
                 conn = sqlite3.connect(db_path)
@@ -280,7 +281,7 @@ def main():
         
         if st.button("Load Data"):
             loaded_tables = []
-            db_path = f"db/{dataset_name}.sqlite3"
+            db_path = f"db/{dataset_name}/{dataset_name}.sqlite3"
             conn = None
             try:
                 conn = sqlite3.connect(db_path)

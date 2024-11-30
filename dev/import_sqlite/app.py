@@ -40,7 +40,8 @@ def preview_table(db_path, table_name):
 def main():
     st.title("SQLite Import Tool")
     DB_LOADED = False
-
+    dataset_name = ""
+    
     # Section 1: Upload SQLite
     st.subheader("1. Upload SQLite Database")
 

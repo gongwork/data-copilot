@@ -50,7 +50,7 @@ def add_download_buttons(dataset_name):
         col1, col2 = st.columns(2)
         
         # Download DDL
-        ddl_path = f"db/{dataset_name}_ddl.sql"
+        ddl_path = f"db/{dataset_name}/{dataset_name}_ddl.sql"
         if os.path.exists(ddl_path):
             with open(ddl_path, 'r') as f:
                 ddl_content = f.read()
@@ -62,7 +62,7 @@ def add_download_buttons(dataset_name):
             )
         
         # Download SQLite DB
-        db_path = f"db/{dataset_name}.sqlite3"
+        db_path = f"db/{dataset_name}/{dataset_name}.sqlite3"
         if os.path.exists(db_path):
             with open(db_path, 'rb') as f:
                 db_content = f.read()
@@ -105,6 +105,7 @@ def create_sqlite_ddl(df, table_name, file_name, column_mapping):
         return None
 
 def main():
+    dataset_name = ""
     st.title("CSV Import Tool")
     
     # Initialize session state
@@ -222,7 +223,7 @@ def main():
 
         try:
             # Save DDL to file
-            ddl_path = f"db/{dataset_name}_ddl.sql"
+            ddl_path = f"db/{dataset_name}/{dataset_name}_ddl.sql"
             with open(ddl_path, "w", encoding='utf-8') as f:
                 f.write(ddl_content)
             st.success(f"DDL saved to: '{ddl_path}'")
@@ -230,7 +231,7 @@ def main():
             st.error(f"Error saving DDL file: {str(e)}")
         
         if st.button("Create Tables"):
-            db_path = f"db/{dataset_name}.sqlite3"
+            db_path = f"db/{dataset_name}/{dataset_name}.sqlite3"
             conn = None
             try:
                 conn = sqlite3.connect(db_path)
@@ -254,7 +255,7 @@ def main():
         
         if st.button("Load Data"):
             loaded_tables = []
-            db_path = f"db/{dataset_name}.sqlite3"
+            db_path = f"db/{dataset_name}/{dataset_name}.sqlite3"
             conn = None
             try:
                 conn = sqlite3.connect(db_path)

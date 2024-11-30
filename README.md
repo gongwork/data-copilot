@@ -2,6 +2,19 @@
 
 An streamlit app built for data professionals, powered by [vanna.ai](https://github.com/vanna-ai).
 
+## Overview
+![welcome](https://github.com/gongwork/data-copilot/blob/main/docs/p0-welcome.png)
+
+## Features
+
+### Configure
+
+![configure](https://github.com/gongwork/data-copilot/blob/main/docs/p1-config.png)
+
+
+### 
+
+
 ## Setup
 
 prepare `.env` file (see `.env.example`) by setting API_KEY for the LLM providor of choice.

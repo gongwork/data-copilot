@@ -119,8 +119,7 @@ def xlsx_import_tool():
     
         if st.button("Create Dataset"):
             try:
-                Path("db").mkdir(exist_ok=True)
-                Path(f"db/{dataset_name}").mkdir(exist_ok=True)
+                Path(f"db/{dataset_name}").mkdir(eparents=True, exist_ok=True)
                 st.success(f"Created dataset directory: db/{dataset_name}")
             except Exception as e:
                 st.error(f"Error creating dataset directory: {str(e)}")
@@ -153,7 +152,8 @@ def xlsx_import_tool():
                         # Initialize ignored columns for this sheet
                         if sheet_name not in st.session_state.ignored_columns:
                             st.session_state.ignored_columns[sheet_name] = set()
-            
+                    else:
+                        st.warning(f"invalid data sheet: {sheet_name}")
             except Exception as e:
                 st.error(f"Error processing Excel file: {str(e)}")
     
