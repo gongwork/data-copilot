@@ -2,10 +2,17 @@
 
 An streamlit app built for data professionals, powered by [vanna.ai](https://github.com/vanna-ai).
 
+By streamlining the data-to-insight life-cycle, Data Copilot is a game-changer tool for Self-Service Analytics. Built on cutting-edge GenAI models, it empowers data professionals to unlock insights from data faster than ever, therefore allows them to focus on deeper analysis and strategic decision-making.
+
 ## Overview
 ![welcome](https://github.com/gongwork/data-copilot/blob/main/docs/p0-welcome.png)
 
 ## Features
+
+- **Semantic Search**: discover data schema
+- **Text-to-SQL**: generate SQL from plain text
+- **Data-to-Plot**: generate Python code to visualize data
+- **Data Privacy**: achievable by using Ollama and open-source LLM models locally
 
 ### Configure
 Choose data source, vector store, LLM model
@@ -56,4 +63,5 @@ open browser at URL: http://localhost:8501
 
 ## Additional Notes
 
-[Extra 1](https://github.com/gongwork/data-copilot/blob/main/README-extra-1.md)
+[1](https://github.com/gongwork/data-copilot/blob/main/docs/README-extra-1.md)
+
