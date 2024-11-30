@@ -35,6 +35,14 @@ Question & answer pairs are saved to database
 Import data from CSV or connect to database
 ![import](https://github.com/gongwork/data-copilot/blob/main/docs/p9-import-sqlite.png)
 
+### Demo Video
+
+[![Data-Copilot Demo](https://img.youtube.com/vi/RKSlUAFmbaM/0.jpg)](https://www.youtube.com/watch?v=RKSlUAFmbaM)
+
+[Data Copilot for Self-Service Analytics](https://www.youtube.com/watch?v=RKSlUAFmbaM)
+
+
+
 ## Setup
 
 prepare `.env` file (see `.env.example`) by setting API_KEY for the LLM providor of choice.
@@ -51,10 +59,6 @@ open browser at URL: http://localhost:8501
 
 ### Notes
 - [plotly 5.23.0 is incompatible with vanna 0.7.4](https://github.com/vanna-ai/vanna/issues/704)
-
-## Demo Video
-
-[Data Copilot for Self-Service Analytics](https://www.youtube.com/watch?v=RKSlUAFmbaM)
 
 
 
