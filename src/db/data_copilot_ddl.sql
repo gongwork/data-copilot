@@ -1,3 +1,19 @@
+-- drop table t_user;
+CREATE TABLE IF NOT EXISTS t_user
+(
+	id INTEGER PRIMARY KEY AUTOINCREMENT
+	, email TEXT NOT NULL UNIQUE
+	, username TEXT NOT NULL
+	, password BLOB NOT NULL
+	, is_admin INTEGER DEFAULT 0 CHECK(is_admin IN (0, 1))
+	, is_active INTEGER DEFAULT 1 CHECK(is_active IN (0, 1))
+	, profile TEXT
+	, note TEXT
+
+	, created_ts TEXT
+	, ts TEXT
+);
+
 -- drop table t_qa;
 CREATE TABLE if not exists t_qa
 (
@@ -31,6 +47,8 @@ CREATE TABLE if not exists t_qa
 	, created_ts text
 	, ts text
 	, is_active text  DEFAULT 'Y'
+
+	, email text  NOT NULL -- user email
 );
 
 -- drop table t_config;
@@ -52,6 +70,8 @@ CREATE TABLE if not exists t_config
 	, created_ts text
 	, ts text
 	, is_active text  DEFAULT 'Y'
+
+	, email text  NOT NULL -- user email
 );
 
 /* 
@@ -65,14 +85,17 @@ alter table t_config add column db_password text;
 CREATE TABLE if not exists t_note
 ( 
     id text NOT NULL
-    , title text NOT NULL
-    , link_url text 
+    , note_name text NOT NULL
+    , url text 
+	, note_type TEXT DEFAULT '' CHECK(note_type IN ('', 'learning', 'research', 'project', 'journal'))
+	, note text
 	, tags text
 
-	, note text
 	, created_ts text
 	, ts text
 	, is_active text  DEFAULT 'Y'
+
+	, email text  NOT NULL -- user email
 );
 
---select * from t_config;
+
