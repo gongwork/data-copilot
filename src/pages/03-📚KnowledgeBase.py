@@ -65,23 +65,25 @@ def do_knowledgebase():
                             ,placeholder=doc_sample)
 
         df_doc = None
-        table_bus_term = "bus_term" 
         try:
-            df_doc = vn.run_sql(f"select * from {table_bus_term}")       
+            df_doc = vn.run_sql(f"select * from {TABLE_BUS_TERM}")       
             st.dataframe(df_doc)
         except Exception as e:
-            st.warning(f"table '{table_bus_term}' not found, skip!")
+            st.warning(f"table '{TABLE_BUS_TERM}' not found, skip!")
 
         if st.button("Add", key="btn_add_doc"):
-            if doc_text:
-                result = vn.train(documentation=doc_text, dataset=DB_NAME)
-                st.write(result)
-
-            if df_doc is not None:
-                business_docs = convert_to_string_list(df_doc)
-                for doc_text in business_docs:
+            try:
+                if doc_text:
                     result = vn.train(documentation=doc_text, dataset=DB_NAME)
                     st.write(result)
+
+                if df_doc is not None and not df_doc.empty:
+                    business_docs = convert_to_string_list(df_doc)
+                    for doc_text in business_docs:
+                        result = vn.train(documentation=doc_text, dataset=DB_NAME)
+                        st.write(result)
+            except Exception as e:
+                st.warning(str(e))
 
     with st.expander("Manage Knowledge", expanded=False):
         c_1, c_2, c_3 = st.columns([4,1,3])
@@ -100,7 +102,7 @@ def do_knowledgebase():
             btn_rm_all = st.button("Remove All")
             if btn_rm_all:
                 for c in ["sql", "ddl", "documentation"]:
-                    vn.remove_collection(c)
+                    vn.remove_collection(c, dataset=DB_NAME)
 
         if df is not None and not df.empty:
             st.dataframe(df)

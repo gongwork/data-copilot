@@ -123,7 +123,7 @@ def csv_import_tool():
         if st.button("Create Dataset"):
             try:
                 # Create directories
-                Path(f"db/{dataset_name}").mkdir(eparents=True, exist_ok=True)
+                Path(f"db/{dataset_name}").mkdir(parents=True, exist_ok=True)
                 st.success(f"Created dataset directory: db/{dataset_name}")
             except Exception as e:
                 st.error(f"Error creating dataset directory: {str(e)}")

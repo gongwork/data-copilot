@@ -6,7 +6,7 @@ from vanna.ollama import Ollama
 from vanna.google import GoogleGeminiChat
 from vanna.openai import OpenAI_Chat
 from vanna.anthropic import Anthropic_Chat
-from vanna.bedrock import Bedrock_Converse, Bedrock_Chat
+from vanna.bedrock import Bedrock_Chat  # , Bedrock_Converse
 from vanna.chromadb.chromadb_vector import ChromaDB_VectorStore
 
 import boto3
@@ -16,9 +16,11 @@ import os
 from dotenv import load_dotenv  # type: ignore
 load_dotenv()
 
-
+TABLE_BUS_TERM = "bus_term" # table to store documentation in knowledgebase
 
 DEFAULT_LLM_MODEL = "OpenAI GPT 3.5 Turbo" # "Alibaba QWen 2.5 Coder (Open)"
+# use AWS Bedrock at work
+# DEFAULT_LLM_MODEL = "AWS Bedrock Claude 3 Sonnet" 
 LLM_MODEL_MAP = {
     "Anthropic Claude 3 Sonnet": 'claude-3-sonnet-20240229',
     "Anthropic Claude 3.5 Sonnet": 'claude-3-5-sonnet-20240620',
@@ -29,7 +31,7 @@ LLM_MODEL_MAP = {
     "OpenAI GPT 4o mini": 'gpt-4o-mini',
     "OpenAI GPT 4": 'gpt-4',
     "Google Gemini 1.5 Pro": 'gemini-1.5-pro',
-    "AWS Bedrock Claude 3.0 Sonnet": 'claude-3-sonnet-20240229-v1:0', 
+    "AWS Bedrock Claude 3 Sonnet": 'claude-3-sonnet-20240229-v1:0', 
     "Alibaba QWen 2.5 Coder (Open)": 'qwen2.5-coder:latest',
     "Alibaba QWen 2.5 Coder 1.5B (Open)": 'qwen2.5-coder:1.5b',
     "Alibaba QWen 2.5 Coder 14B (Open)": 'qwen2.5-coder:14b',
@@ -101,8 +103,8 @@ class MyAnthropic(Anthropic_Chat):
         Anthropic_Chat.__init__(self, config=config)
 
 class MyBedrockChat(Bedrock_Chat):
-    def __init__(self, config=None):
-        Bedrock_Chat.__init__(self, config=config)
+    def __init__(self, client, config=None):
+        Bedrock_Chat.__init__(self, client=client, config=config)
 
 class MyOllama(Ollama):
     def __init__(self, config=None):

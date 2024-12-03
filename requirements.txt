@@ -1,24 +1,36 @@
 ## check https://github.com/vanna-ai/vanna/blob/main/pyproject.toml
 ## for any missing pkg
-streamlit-aggrid
-lxml
-streamlit_option_menu
-jsonlines
-notebook
-ollama
-# vanna
-# use wgong/ssadata (install from git source) v0.7.5
-# uncomment before to install from source remotely
+
+# uncomment below to install from forked vanna source remotely
 # git+https://github.com/wgong/ssadata.git
+# install from forked vanna locally
+# cd wgong/ssadata
+# pip install -e .
+# pip show vanna
+# version 0.7.5 as of 2024-12-03
+
+python-dotenv
+
+# Streamlit
 streamlit
 streamlit_code_editor
-python-dotenv
+streamlit_option_menu
+streamlit-aggrid
+
+# VectorDB/LLM
+chromadb
+ollama
 google-generativeai
 google-cloud-aiplatform
-chromadb
 openai
 mistralai
 anthropic
 google-generativeai
-boto3
+boto3  # required for AWS Bedrock
+
+# Misc
 openpyxl>=3.1.0
+lxml
+jsonlines
+notebook
+

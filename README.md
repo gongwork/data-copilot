@@ -62,5 +62,16 @@ open browser at URL: http://localhost:8501
 
 ## Additional Notes
 
-[1](https://github.com/gongwork/data-copilot/blob/main/docs/README-extra-1.md)
+- Add documentation into knowledgebase to enhance context search
+    - prepare a csv file with the following columns
+        - business_term
+        - business_description
+        - related_tables
+        - related_columns
+    - import it into table `bus_term`
+    - see [bus_term.csv](https://github.com/wgong/py4kids/blob/master/lesson-18-ai/vanna/note_book/data/company_rank/bus_term.csv) for example
+
+- [1](https://github.com/gongwork/data-copilot/blob/main/docs/README-extra-1.md)
+
+
 

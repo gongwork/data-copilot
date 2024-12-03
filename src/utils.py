@@ -33,6 +33,7 @@ from st_aggrid import (
 from ui_layout import *
 
 from vanna_calls import (
+    # helper functions
     setup_vanna_cached,
     generate_sql_cached,
     run_sql_cached,
@@ -41,10 +42,13 @@ from vanna_calls import (
     should_generate_chart_cached,
     generate_summary_cached,
     parse_llm_model_spec,
+    get_ollama_models,
+
+    # constants
+    TABLE_BUS_TERM,
     DEFAULT_LLM_MODEL,
     LLM_MODEL_MAP, 
     LLM_MODEL_REVERSE_MAP, 
-    get_ollama_models,
 )
 
 from vanna.base import SQL_DIALECTS, VECTOR_DB_LIST
