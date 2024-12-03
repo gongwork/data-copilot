@@ -155,7 +155,7 @@ def db_insert_qa_result(qa_data, enable_feedback=True):
         db_name = cfg_data.get("db_name")
         vn = setup_vanna_cached(cfg_data)
         result = vn.train(question=my_question, sql=sql_generated, dataset=db_name)
-        st.image("../docs/blank_space.png")
+        st.image("https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/blank_space.png")
         st.success(f"Feedback is added to knowledgebase [id = {result}]")        
 
 def ask_llm_direct(my_question):
