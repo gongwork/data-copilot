@@ -24,41 +24,42 @@ DB_URL = cfg_data.get("db_url")
 
 
 sample_questions = {
-    "chinook" : f"""
-        #### Sample prompts for "Chinook" dataset
-        - List all the tables
-        - What tables store order information? Hint: table_name is stored in column called "name" from table called sqlite_master
-        - Find top 5 customers by sales
-        - List all customers from Canada and their email addresses
-        - Find the top 5 most expensive tracks (based on unit price)
-        - Identify artists who have albums with tracks appearing in multiple genres (Hint: join artists and albums tables on ArtistId column)
+"chinook" : f"""
+#### Sample prompts for "Chinook" dataset
+- List all the tables
+- What tables store order information? Hint: table_name is stored in column called "name" from table called sqlite_master
+- Find top 5 customers by sales
+- List all customers from Canada and their email addresses
+- Find the top 5 most expensive tracks (based on unit price)
+- Identify artists who have albums with tracks appearing in multiple genres (Hint: join artists and albums tables on ArtistId column)
 
-        see [text-to-SQL questions](https://github.com/wgong/py4kids/blob/master/lesson-18-ai/vanna/note_book/gongai/test-2/ollama-llama3-chromadb-sqlite-test-2.ipynb)
-        """,
+see [text-to-SQL questions](https://github.com/wgong/py4kids/blob/master/lesson-18-ai/vanna/note_book/gongai/test-2/ollama-llama3-chromadb-sqlite-test-2.ipynb)
+""",
 
-    "movie" : f"""
-        #### Sample prompts for "Movie" dataset
-        - What are the tables in the movie database
-        - what are the top 5 movies with highest budget? use bar chart to visualize data
-        - how many movies are there
-        - how many directors are there
-        - Find these 3 directors: James Cameron ; Luc Besson ; John Woo
-        - Find all directors with name starting with Steven
-        - What movies have Steven Spielberg directed, please list them alphabetically
+"movie" : f"""
+#### Sample prompts for "Movie" dataset
+- What are the tables in the movie database
+- what are the top 5 movies with highest budget? use bar chart to visualize data
+- how many movies are there
+- how many directors are there
+- Find these 3 directors: James Cameron ; Luc Besson ; John Woo
+- Find all directors with name starting with Steven
+- What movies have Steven Spielberg directed, please list them alphabetically
 
-        see [kaggle IMDB notebook](https://www.kaggle.com/code/priy998/imdb-sqlite/notebook)
-        """,
+see [kaggle IMDB notebook](https://www.kaggle.com/code/priy998/imdb-sqlite/notebook)
+""",
 
-    "company_rank" : f"""
-        #### Sample prompts for "Company Ranks" dataset
-        - What are the tables in this database
-        - what are the top 10 companies by market cap in United States
-        - how many companies are there in United States
-        - Show me the key financial data for the top 5 companies
-        - Show me the key financial data for the top 5 companies from Europe
+"company_rank" : f"""
+#### Sample prompts for "Company Ranks" dataset
+- What are the tables in this database
+- what are the top 10 companies by market cap in United States
+- how many companies are there in United States
+- Show me the key financial metrics for the top 5 companies
+- for the top 5 companies from Europe, show their key financial metrics
+- show their key financial metrics for the top 5 companies from Asia
 
-        see [kaggle](https://www.kaggle.com/datasets/patricklford/largest-companies-analysis-worldwide)
-        """,
+see [kaggle](https://www.kaggle.com/datasets/patricklford/largest-companies-analysis-worldwide)
+""",
 
 }
 
@@ -154,6 +155,7 @@ def db_insert_qa_result(qa_data, enable_feedback=True):
         db_name = cfg_data.get("db_name")
         vn = setup_vanna_cached(cfg_data)
         result = vn.train(question=my_question, sql=sql_generated, dataset=db_name)
+        st.image("../docs/blank_space.png")
         st.success(f"Feedback is added to knowledgebase [id = {result}]")        
 
 def ask_llm_direct(my_question):
@@ -186,40 +188,50 @@ def ask_rag(my_question):
     user_message = st.chat_message("user")
     user_message.write(f"{my_question}")
 
-    ts_start = time()
-    my_sql = generate_sql_cached(cfg_data, question=my_question)
-    ts_stop = time()
-    ts_delta = f"{(ts_stop-ts_start):.2f}"
-    my_answer.update({"my_sql":{"data":my_sql, "ts_delta": ts_delta}})
+    c_left, c_right = st.columns([4,6])
 
-    my_valid_sql = is_sql_valid(cfg_data, sql=my_sql)
-    my_answer.update({"my_valid_sql":{"data":my_valid_sql}})
-    if not my_valid_sql:
-        assistant_message = st.chat_message(
-            "assistant", avatar=VANNA_ICON_URL
-        )
-        assistant_message.write(my_sql)
-        return my_answer
+    with c_left:
+        ts_start = time()
+        my_sql = generate_sql_cached(cfg_data, question=my_question)
+        ts_stop = time()
+        ts_delta = f"{(ts_stop-ts_start):.2f}"
+        my_answer.update({"my_sql":{"data":my_sql, "ts_delta": ts_delta}})
 
-    if st.session_state.get("out_show_sql", True):
-        assistant_message_sql = st.chat_message(
-            "assistant", avatar=VANNA_ICON_URL
-        )
-        assistant_message_sql.code(my_sql, language="sql", line_numbers=True)
+        my_valid_sql = is_sql_valid(cfg_data, sql=my_sql)
+        my_answer.update({"my_valid_sql":{"data":my_valid_sql}})
+        if not my_valid_sql:
+            assistant_message = st.chat_message(
+                "assistant", avatar=VANNA_ICON_URL
+            )
+            assistant_message.write(my_sql)
+            return my_answer
 
-    ts_start = time()
-    my_df = run_sql_cached(cfg_data, sql=my_sql)
-    ts_stop = time()
-    ts_delta = f"{(ts_stop-ts_start):.2f}"        
-    my_answer.update({"my_df":{"data":my_df, "ts_delta": ts_delta}})
+        if st.session_state.get("out_show_sql", True):
+            assistant_message_sql = st.chat_message(
+                "assistant", avatar=VANNA_ICON_URL
+            )
+            assistant_message_sql.code(my_sql, language="sql", line_numbers=True)
+        else:
+            with st.expander("Show SQL Query", expanded=False):
+                st.code(my_sql, language="sql", line_numbers=True)
 
-    if my_df is not None:
+        ts_start = time()
+        my_df = run_sql_cached(cfg_data, sql=my_sql)
+        ts_stop = time()
+        ts_delta = f"{(ts_stop-ts_start):.2f}"        
+        my_answer.update({"my_df":{"data":my_df, "ts_delta": ts_delta}})
+
+        if my_df is None or my_df.empty: 
+            return my_answer 
+
         if st.session_state.get("out_show_table", True):
             assistant_message_table = st.chat_message(
                 "assistant",
                 avatar=VANNA_ICON_URL,
             )
             assistant_message_table.dataframe(my_df)
+
+    with c_right:
 
         if should_generate_chart_cached(cfg_data, question=my_question, sql=my_sql, df=my_df):
 
@@ -228,6 +240,8 @@ def ask_rag(my_question):
             ts_stop = time()
             ts_delta = f"{(ts_stop-ts_start):.2f}"
             my_answer.update({"my_plot":{"data":my_plot, "ts_delta": ts_delta}})
+            if not my_plot:
+                return my_answer
 
             if st.session_state.get("out_show_plotly_code", False):
                 assistant_message_plotly_code = st.chat_message(
@@ -237,33 +251,38 @@ def ask_rag(my_question):
                 assistant_message_plotly_code.code(
                     my_plot, language="python", line_numbers=True
                 )
+            else:
+                with st.expander("Show Python Code", expanded=False):
+                    st.code(my_plot, language="python", line_numbers=True)            
 
-            if my_plot is not None and my_plot != "":
-                if st.session_state.get("out_show_chart", True):
-                    assistant_message_chart = st.chat_message(
-                        "assistant",
-                        avatar=VANNA_ICON_URL,
-                    )
-                    my_fig = generate_plot_cached(cfg_data, code=my_plot, df=my_df)
-                    my_answer.update({"my_fig":{"data":my_fig}})
-                    if my_fig is not None:
-                        assistant_message_chart.plotly_chart(my_fig)
-                    else:
-                        assistant_message_chart.error("I couldn't generate a chart")
-
-        # display summary
-        if st.session_state.get("out_show_summary", True):
-            ts_start = time()
-            my_summary = generate_summary_cached(cfg_data, question=my_question, df=my_df)
-            ts_stop = time()
-            ts_delta = f"{(ts_stop-ts_start):.2f}"
-            my_answer.update({"my_summary":{"data":my_summary, "ts_delta": ts_delta}})
-            if my_summary is not None and my_summary != "":
-                assistant_message_summary = st.chat_message(
+            if st.session_state.get("out_show_chart", True):
+                assistant_message_chart = st.chat_message(
                     "assistant",
                     avatar=VANNA_ICON_URL,
                 )
-                assistant_message_summary.text(my_summary)
+                my_fig = generate_plot_cached(cfg_data, code=my_plot, df=my_df)
+                my_answer.update({"my_fig":{"data":my_fig}})
+                if my_fig is not None:
+                    assistant_message_chart.plotly_chart(my_fig)
+                else:
+                    assistant_message_chart.error("I couldn't generate a chart")
+
+    # display summary
+    if st.session_state.get("out_show_summary", True):
+        ts_start = time()
+        my_summary = generate_summary_cached(cfg_data, question=my_question, df=my_df)
+        ts_stop = time()
+        ts_delta = f"{(ts_stop-ts_start):.2f}"
+        my_answer.update({"my_summary":{"data":my_summary, "ts_delta": ts_delta}})
+        if not my_summary:
+            return my_answer 
+
+        assistant_message_summary = st.chat_message(
+            "assistant",
+            avatar=VANNA_ICON_URL,
+        )
+        assistant_message_summary.text(my_summary)
+
     return my_answer
 
 
@@ -306,9 +325,9 @@ def do_sidebar():
             cfg_show_data(cfg_data)
 
         with st.expander("Output Settings", expanded=False):
-            st.checkbox("Show SQL Query", value=True, key="out_show_sql")
+            st.checkbox("Show SQL Query", value=False, key="out_show_sql")
             st.checkbox("Show Dataframe", value=True, key="out_show_table")
-            st.checkbox("Show Python Code", value=True, key="out_show_plotly_code")
+            st.checkbox("Show Python Code", value=False, key="out_show_plotly_code")
             st.checkbox("Show Plotly Chart", value=True, key="out_show_chart")
             st.checkbox("Show Summary", value=False, key="out_show_summary")
             # st.checkbox("Show Follow-up Questions", value=False, key="show_followup")
