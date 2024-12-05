@@ -213,12 +213,19 @@ def do_config():
     """, unsafe_allow_html=True)    
 
     with st.expander("Specify vector store: (default - ChromaDB)", expanded=True):
+
         vector_db_list = sorted(VECTOR_DB_LIST)
         vector_db = st.selectbox(
             "Vector DB Type",
             options=vector_db_list,
             index=vector_db_list.index(cfg_data.get("vector_db"))
         )
+
+        # # st.info(Path.cwd())
+        # refresh_vector_db = st.button("Refresh Vector Store")
+        # if refresh_vector_db and vector_db == "chromadb":
+        #     Path("./chroma.sqlite3").unlink(missing_ok=True)
+
 
     st.markdown(f"""
     ##### GenAI Model

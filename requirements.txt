@@ -33,4 +33,5 @@ openpyxl>=3.1.0
 lxml
 jsonlines
 notebook
+xlsxwriter  # used to combine CSV into one .xlsx
 

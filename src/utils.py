@@ -16,6 +16,8 @@ from uuid import uuid4
 import json
 import jsonlines
 
+import click   # CLI interface
+
 # special libs
 from bs4 import BeautifulSoup
 from lxml import html
@@ -52,6 +54,7 @@ from vanna_calls import (
 )
 
 from vanna.base import SQL_DIALECTS, VECTOR_DB_LIST
+# from vanna.utils import snake_case
 
 #############################
 # Config params (1st)
@@ -1146,3 +1149,86 @@ def cfg_show_data(data):
     config_table_md = gen_markdown_text(data)
     st.markdown(config_table_md, unsafe_allow_html=True) 
 
+def snake_case(s):
+    """Convert string to snake_case."""
+    # Replace any non-word character with underscore
+    s = re.sub(r'[^\w\s]', '_', s)
+    # Replace whitespace with underscore
+    s = re.sub(r'\s+', '_', s)
+    # Convert to lowercase
+    return s.lower()
+
+@click.command()
+@click.option(
+    '--input-dir', '-i',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
+    default='.',
+    help='Directory containing CSV files (default: current directory)'
+)
+@click.option(
+    '--output', '-o',
+    type=click.Path(dir_okay=False),
+    default='combined_data.xlsx',
+    help='Output Excel file name (default: combined_data.xlsx)'
+)
+@click.option(
+    '--trim-prefix', '-t',
+    type=click.STRING,
+    default='',
+    help='trim CSV filename with prefix avoiding 32 chars sheetname limitation'
+)
+def convert_csvs_to_excel(input_dir, output, trim_prefix):
+    """
+    Convert all CSV files in the specified directory to sheets in a single Excel file.
+    Each CSV becomes a sheet named after the original file.
+    """
+    # Excel has a 31 character limit for sheet names
+    MAX_SHEETNAME = 32 - 1
+    trim_prefix = snake_case(trim_prefix)
+
+    # Ensure output has .xlsx extension
+    if not output.lower().endswith('.xlsx'):
+        output += '.xlsx'
+    
+    try:
+        # Get all CSV files in the directory
+        csv_files = glob(f"{input_dir}/*.csv")
+        
+        if not csv_files:
+            click.echo("No CSV files found in the specified directory.", err=True)
+            return
+        
+        # Process each CSV file
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            with click.progressbar(csv_files, label='Processing CSV files') as files:
+                for csv_path in files:
+                    # Read the CSV file
+                    df = pd.read_csv(csv_path)
+                    
+                    # Create sheet name from file name (remove .csv extension)
+                    orig_csv_name = Path(csv_path).stem
+                    print(f"\nProcessing {csv_path} ...")
+                    sheet_name = snake_case(orig_csv_name)
+
+                    if sheet_name.startswith(trim_prefix):
+                        sheet_name = sheet_name.replace(trim_prefix, "")
+
+                    # remove extra '_'
+                    sheet_name = "_".join([i for i in sheet_name.split("_") if i])
+
+                    if len(sheet_name) > MAX_SHEETNAME:
+                        sheet_name = sheet_name[:MAX_SHEETNAME]
+                        click.echo(f"Warning: Sheet name '{orig_csv_name}' truncated to '{sheet_name}'")
+                    
+                    # Write the dataframe to Excel sheet
+                    df.to_excel(writer, sheet_name=sheet_name, index=False)
+        
+        click.echo(f"\nSuccess! Created {output} with {len(csv_files)} sheets.")
+            
+    except Exception as e:
+        click.echo(f"Error: {str(e)}", err=True)
+        raise click.Abort()
+
+if __name__ == "__main__":
+    # pass
+    convert_csvs_to_excel()

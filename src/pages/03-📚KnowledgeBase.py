@@ -64,6 +64,10 @@ def do_knowledgebase():
         doc_text = st.text_area("Documentation", value="", height=100, key="add_doc"
                             ,placeholder=doc_sample)
 
+        if st.button("Add", key="btn_add_a_doc") and doc_text:
+            result = vn.train(documentation=doc_text, dataset=DB_NAME)
+            st.write(result)
+
         df_doc = None
         try:
             df_doc = vn.run_sql(f"select * from {TABLE_BUS_TERM}")       
@@ -71,12 +75,8 @@ def do_knowledgebase():
         except Exception as e:
             st.warning(f"table '{TABLE_BUS_TERM}' not found, skip!")
 
-        if st.button("Add", key="btn_add_doc"):
+        if st.button("Add Bus Term", key="btn_add_bus_term"):
             try:
-                if doc_text:
-                    result = vn.train(documentation=doc_text, dataset=DB_NAME)
-                    st.write(result)
-
                 if df_doc is not None and not df_doc.empty:
                     business_docs = convert_to_string_list(df_doc)
                     for doc_text in business_docs:
