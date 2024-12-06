@@ -72,7 +72,8 @@ def db_upsert_cfg(data):
                     db_url,
                     created_ts,
                     ts,
-                    is_active
+                    is_active,
+                    email
                 ) values (
                     '{id_new}',
                     '{vector_db}',
@@ -83,7 +84,8 @@ def db_upsert_cfg(data):
                     '{db_url}',
                     '{curr_ts}',
                     '{curr_ts}',
-                    'Y'
+                    'Y',
+                    '{DEFAULT_EMAIL}'
                 );
             """
         else:

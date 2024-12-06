@@ -18,9 +18,12 @@ load_dotenv()
 
 TABLE_BUS_TERM = "bus_term" # table to store documentation in knowledgebase
 
+DEFAULT_EMAIL = 'joe_coder@gmail.com'  # dummy placeholder
+
 DEFAULT_LLM_MODEL = "OpenAI GPT 3.5 Turbo" # "Alibaba QWen 2.5 Coder (Open)"
 # use AWS Bedrock at work
 # DEFAULT_LLM_MODEL = "AWS Bedrock Claude 3 Sonnet" 
+
 LLM_MODEL_MAP = {
     "Anthropic Claude 3 Sonnet": 'claude-3-sonnet-20240229',
     "Anthropic Claude 3.5 Sonnet": 'claude-3-5-sonnet-20240620',
@@ -221,7 +224,7 @@ def generate_sql_cached(cfg_data, question: str):
 
         {question}
     """
-    raw_sql = vn.generate_sql(question=question_hint, allow_llm_to_see_data=True)
+    raw_sql = vn.generate_sql(question=question_hint, allow_llm_to_see_data=True, sql_row_limit=st.session_state.get("out_sql_limit", 20))
     my_sql = vn.extract_sql(raw_sql)
     return my_sql
 

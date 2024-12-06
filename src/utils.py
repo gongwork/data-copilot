@@ -48,6 +48,7 @@ from vanna_calls import (
 
     # constants
     TABLE_BUS_TERM,
+    DEFAULT_EMAIL,
     DEFAULT_LLM_MODEL,
     LLM_MODEL_MAP, 
     LLM_MODEL_REVERSE_MAP, 
@@ -67,16 +68,16 @@ VANNA_ICON_URL  = "https://cdn-icons-png.flaticon.com/128/13298/13298257.png"
 # VANNA_AI_PROCESS_URL = "https://private-user-images.githubusercontent.com/7146154/299417072-1d2718ad-12a8-4a76-afa2-c61754462f93.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTczMzUxMjEsIm5iZiI6MTcxNzMzNDgyMSwicGF0aCI6Ii83MTQ2MTU0LzI5OTQxNzA3Mi0xZDI3MThhZC0xMmE4LTRhNzYtYWZhMi1jNjE3NTQ0NjJmOTMuZ2lmP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MDYwMiUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDA2MDJUMTMyNzAxWiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9MmQ4MzU0ZDg1ZDg3ZWEzYjZlMWQxMDkzMTBiYjk1NGExNzYxYjQ4Y2YwMTNjYTkzZGU2N2IxMjU2YTgyZTZjNSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmYWN0b3JfaWQ9MCZrZXlfaWQ9MCZyZXBvX2lkPTAifQ.o-Q0S0zOeCJrfF4XP5WKc41Eh5qIdwEwEl2n_ZA_AoM"
 
 STR_APP_NAME             = "Data Copilot"
-STR_MENU_HOME            = "Home"
-STR_MENU_ASK_RAG         = "AI - Retrieval Augmented Generation (RAG)"
-STR_MENU_EVAL            = "Evaluation"
-STR_MENU_IMPORT_DATA     = "Import Data"
-STR_MENU_CONFIG          = "Settings"
-STR_MENU_TRAIN           = "KnowledgeBase"
-STR_MENU_DB              = "DataBase"
-STR_MENU_RESULT          = "Question & Anwser Results"
+STR_MENU_HOME            = "Welcome"
+STR_MENU_CONFIG          = "Configure Settings"
+STR_MENU_DB              = "Query Database"
+STR_MENU_TRAIN           = "Train Knowledge-base"
+STR_MENU_ASK_RAG         = "Ask AI (RAG)"
+STR_MENU_RESULT          = "Review Q&A Results"
+STR_MENU_EVAL            = "Evaluate LLM Models"
 STR_MENU_NOTE            = "Take Notes"
-STR_MENU_ACKNOWLEDGE     = "Acknowledgement"
+STR_MENU_IMPORT_DATA     = "Import Data"
+STR_MENU_ACKNOWLEDGE     = "Thank You"
 
 STR_SAVE = "✅ Save" # 💾
 CFG = {

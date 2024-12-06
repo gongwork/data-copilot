@@ -127,7 +127,8 @@ def db_insert_qa_result(qa_data, enable_feedback=True):
             summary_ts_delta,
             created_ts,
             ts,
-            is_active
+            is_active,
+            email
         ) values (
             '{id}',
             '{id_config}',
@@ -142,7 +143,8 @@ def db_insert_qa_result(qa_data, enable_feedback=True):
             '{summary_ts_delta}',
             '{curr_ts}',
             '{curr_ts}',
-            'Y'
+            'Y',
+            '{DEFAULT_EMAIL}'
         );
     """
     with DBConn() as _conn:
@@ -333,8 +335,9 @@ def do_sidebar():
             # st.checkbox("Show Follow-up Questions", value=False, key="show_followup")
 
             st.checkbox("Allow Feedback", value=True, key="out_allow_feedback")
+            st.number_input("SQL Limit", value=True, key="out_sql_limit")
 
-            st.checkbox("Debug", value=False, key="debug_ask_ai")
+            st.checkbox("Debug", value=20, key="debug_ask_ai")
 
             # st.button("Reset", on_click=lambda: reset_my_state(), use_container_width=True)
 
