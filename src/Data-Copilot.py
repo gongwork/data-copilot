@@ -34,18 +34,17 @@ st.markdown(f"""
 By streamlining the data-to-insight life-cycle, **<span style="color: red;">Data Copilot</span>** is a game-changer tool for Self-Service Analytics.
   Built on cutting-edge GenAI models, it empowers data professionals to unlock insights from data faster than ever, therefore allows them to focus on deeper analysis and strategic decision-making. 
 
-#### <span style="color: blue;">Key Features</span>
+#### <span style="color: blue;">Features</span>
 - **<span style="color: red;">Semantic Search</span>**: discover data schema
 - **<span style="color: red;">Text-to-SQL</span>**: generate SQL from plain text
 - **<span style="color: red;">Data-to-Plot</span>**: generate Python code to visualize data 
-- **<span style="color: red;">Data Privacy</span>**: achievable by using Ollama and open-source LLM models locally
+- ( *__optional__* ) **<span style="color: red;">Data Privacy</span>**: achievable by using Ollama and open-source LLM models locally 
                
-#### <span style="color: blue;">Architectural Design </span>
+#### <span style="color: blue;">Architecture </span>
 """, unsafe_allow_html=True)
 
-st.image("https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/data-copilot.drawio.png")
+st.image("https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/00-data-copilot-arch-design.png")
 
-st.image("../docs/00-data-copilot-arch-design.png")
 
 # st.markdown(f"""
 # #### <span style="color: blue;">Demo Video</span>
