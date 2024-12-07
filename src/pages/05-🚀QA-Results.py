@@ -15,7 +15,7 @@ def main():
     search_question = st.text_input("🔍Search question:", key=f"{KEY_PREFIX}_search_question").strip()
     where_clause = f" question like '%{search_question}%'" if search_question else " 1=1 "
 
-    DB_URL = CFG["DB_META_DATA"]
+    DB_URL = CFG["META_DB_URL"]
     with DBConn(DB_URL) as _conn:
         sql_stmt = f"""
             select 
@@ -50,7 +50,7 @@ def main():
     row_id_config = row.get("id_config") if row else ""
     row_question = row.get("question") if row else ""
     row_sql_generated = row.get("sql_generated") if row else ""
-    row_sql_is_valid = row.get("sql_is_valid") if row else "N"
+    row_sql_is_valid = row.get("sql_is_valid", "N") if row else "N"
     row_py_generated = row.get("py_generated") if row else ""
     row_fig_generated = row.get("fig_generated") if row else ""
     cfg_data = db_current_cfg(row_id_config)
@@ -66,30 +66,35 @@ def main():
 
     c_left, c_right = st.columns([4,6])
 
-    my_df = None
-    with c_left:
-        with st.expander("Show SQL Query", expanded=False):
-            st.code(row_sql_generated, language="sql", line_numbers=True)
+    if row_sql_is_valid != "Y":
+        st.markdown(row_sql_generated, unsafe_allow_html=True)
+    else:
+        my_df = None
+        with c_left:
+            with st.expander("Show SQL Query", expanded=False):
+                st.code(row_sql_generated, language="sql", line_numbers=True)
 
-        try:
-            with DBConn(cfg_db_url) as _conn2:
-                my_df = pd.read_sql(row_sql_generated, _conn2) if row_sql_is_valid == "Y" else None
+            try:
+                with DBConn(cfg_db_url) as _conn2:
+                    my_df = pd.read_sql(row_sql_generated, _conn2) if row_sql_is_valid == "Y" else None
+                    if my_df is not None:
+                        st.dataframe(my_df)
+            except Exception as e:
+                st.error(f"str(e): \n{cfg_db_url}")
+
+        with c_right:
+            if row_py_generated:
+                with st.expander("Show Python Code", expanded=False):
+                    st.code(row_py_generated, language="python", line_numbers=True)
+
+            try:
                 if my_df is not None:
-                    st.dataframe(my_df)
-        except Exception as e:
-            st.error(f"str(e): \n{cfg_db_url}")
+                    my_fig = generate_plot_cached(cfg_data, code=row_py_generated, df=my_df)
+                    if my_fig:
+                        st.plotly_chart(my_fig)
+            except Exception as e:
+                st.error(str(e))
 
-    with c_right:
-        with st.expander("Show Python Code", expanded=False):
-            st.code(row_py_generated, language="python", line_numbers=True)
-
-        try:
-            if my_df is not None:
-                my_fig = generate_plot_cached(cfg_data, code=row_py_generated, df=my_df)
-                if my_fig:
-                    st.plotly_chart(my_fig)
-        except Exception as e:
-            st.error(str(e))
 
     with st.expander("Show Config", expanded=False):
         c0_1, c0_2, c0_3, c0_4 = st.columns(4)

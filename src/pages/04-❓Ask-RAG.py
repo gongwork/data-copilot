@@ -32,6 +32,8 @@ sample_questions = {
 - List all customers from Canada and their email addresses
 - Find the top 5 most expensive tracks (based on unit price)
 - Identify artists who have albums with tracks appearing in multiple genres (Hint: join artists and albums tables on ArtistId column)
+- Count number of customers by country
+
 
 see [text-to-SQL questions](https://github.com/wgong/py4kids/blob/master/lesson-18-ai/vanna/note_book/gongai/test-2/ollama-llama3-chromadb-sqlite-test-2.ipynb)
 """,
@@ -64,7 +66,7 @@ see [kaggle](https://www.kaggle.com/datasets/patricklford/largest-companies-anal
 }
 
 
-def db_insert_qa_result(qa_data, enable_feedback=True):
+def db_insert_qa_result(qa_data, DEBUG_FLAG=False):
     """Insert Q&A results to DB 
     """
     if not qa_data: return
@@ -84,7 +86,11 @@ def db_insert_qa_result(qa_data, enable_feedback=True):
         sql_generated = ""
         sql_ts_delta = ""
     
-    sql_is_valid = "Y" if answer.get("my_valid_sql").get("data") else "N"
+    is_valid_flag = answer.get("my_valid_sql").get("data")
+    if isinstance(is_valid_flag, bool):
+        sql_is_valid = "Y" if is_valid_flag else "N"
+    else:
+        sql_is_valid = is_valid_flag
 
     my_plot = answer.get("my_plot", {})
     if my_plot:
@@ -148,7 +154,8 @@ def db_insert_qa_result(qa_data, enable_feedback=True):
         );
     """
     with DBConn() as _conn:
-        # print(sql_script)
+        if DEBUG_FLAG:
+            print(sql_script)
         db_run_sql(sql_script, _conn)
 
     # add to knowledge-base
@@ -179,6 +186,7 @@ def ask_llm_direct(my_question):
         assistant_message.write(resp)
         # store response in my_sql column
         my_answer.update({"my_sql":{"data":resp, "ts_delta": ts_delta}})
+        my_answer.update({"my_valid_sql":{"data":"N"}})
 
     return my_answer
 
@@ -335,9 +343,9 @@ def do_sidebar():
             # st.checkbox("Show Follow-up Questions", value=False, key="show_followup")
 
             st.checkbox("Allow Feedback", value=True, key="out_allow_feedback")
-            st.number_input("SQL Limit", value=True, key="out_sql_limit")
+            st.number_input("SQL Limit", value=20, key="out_sql_limit")
 
-            st.checkbox("Debug", value=20, key="debug_ask_ai")
+            st.checkbox("Debug", value=False, key="debug_ask_ai")
 
             # st.button("Reset", on_click=lambda: reset_my_state(), use_container_width=True)
 

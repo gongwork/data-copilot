@@ -3,7 +3,7 @@ from utils import *
 st.set_page_config(layout="wide")
 st.header("Notes 📝")
 
-DB_URL = CFG["DB_META_DATA"]
+DB_URL = CFG["META_DB_URL"]
 TABLE_NAME = CFG["TABLE_NOTE"]
 KEY_PREFIX = f"col_{TABLE_NAME}"
 
@@ -22,49 +22,13 @@ def main():
     # get distinct tags
     tags = get_tags()
 
-    # c1, c2, c3, c3_2, c4 = st.columns([3,6,2,2,1])
-    # with c1:
-    #     search_term = st.text_input("🔍Search:", key=f"{KEY_PREFIX}_search_term").strip()
-    # with c2:
-    #     search_others = st.text_input("🔍Free-form where-clause:", key=f"{KEY_PREFIX}_search_others").strip()
-    # with c3:
-    #     search_type = st.selectbox("🔍Note Type", CFG["NOTE_TYPE"], index=CFG["NOTE_TYPE"].index(""), key=f"{KEY_PREFIX}_search_type")
-    # with c3_2:
-    #     search_status = st.selectbox("🔍Status Code", CFG["STATUS_CODE"], index=CFG["STATUS_CODE"].index("Others"), key=f"{KEY_PREFIX}_search_status")
-    # with c4:
-    #     active = st.selectbox("🔍Active?", BI_STATES, index=BI_STATES.index("Y"), key=f"{KEY_PREFIX}_active")
-
-    # where_clause = " 1=1 " 
-    # where_clause += " " if not active else f" and is_active = '{active}' "
-    # if not search_status:
-    #     where_clause += " "
-    # elif search_status == "Others":
-    #     where_clause += " and (status_code is null or status_code not in ('Complete', 'De-Scoped') ) "
-    # else:
-    #     where_clause += f" and status_code = '{search_status}' "
-    # where_clause += " " if not search_type else f" and note_type = '{search_type}' "
-
-    # if search_term:
-    #     where_clause += f""" and (
-    #         title like '%{search_term}%'
-    #         or note like '%{search_term}%'
-    #         or tags like '%{search_term}%'       
-    #     )
-    #     """
-    # if search_others:
-    #     where_clause += f""" 
-    #         and (
-    #             {search_others}
-    #     ) """
-
-
     df = None
     with DBConn() as _conn:
         sql_stmt = f"""
             select 
-                title
+                note_name
                 , ifnull(note, '')  as note 
-                , ifnull(link_url, '')  as link_url 
+                , ifnull(url, '')  as link_url 
                 , tags
                 , ifnull(is_active, '')  as is_active
                 , ts

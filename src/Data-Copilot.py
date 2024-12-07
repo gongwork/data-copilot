@@ -59,7 +59,7 @@ def create_tables():
     try:
         db_get_row_count(table_name=CFG["TABLE_CONFIG"])
     except Exception as e:
-        ddl_script = open(CFG["DDL_SCRIPT"]).read()
+        ddl_script = open(CFG["META_DB_DDL"]).read()
         print(ddl_script)
         with DBConn() as _conn:
             db_run_sql(ddl_script, _conn)

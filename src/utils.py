@@ -73,19 +73,22 @@ STR_MENU_CONFIG          = "Configure Settings"
 STR_MENU_DB              = "Query Database"
 STR_MENU_TRAIN           = "Train Knowledge-base"
 STR_MENU_ASK_RAG         = "Ask AI (RAG)"
-STR_MENU_RESULT          = "Review Q&A Results"
+STR_MENU_RESULT          = "Review Q&A History"
 STR_MENU_EVAL            = "Evaluate LLM Models"
 STR_MENU_NOTE            = "Take Notes"
 STR_MENU_IMPORT_DATA     = "Import Data"
 STR_MENU_ACKNOWLEDGE     = "Thank You"
 
 STR_SAVE = "✅ Save" # 💾
+
+META_DB_NAME = "data_copilot"
+
 CFG = {
     "DEBUG_FLAG" : True, # False, # 
     "SQL_EXECUTION_FLAG" : True, #  False, #   control SQL
     
-    "DB_META_DATA" : Path(__file__).parent / "db" / "data_copilot.sqlite3",
-    "DDL_SCRIPT" : Path(__file__).parent / "db" / "data_copilot_ddl.sql",
+    "META_DB_URL" : Path(__file__).parent / "db" / f"{META_DB_NAME}.sqlite3",
+    "META_DB_DDL" : Path(__file__).parent / "db" / f"{META_DB_NAME}_ddl.sql",
 
     # assign table names
     "TABLE_QA" : "t_qa",                # Question/Answer pair
@@ -117,7 +120,7 @@ def fix_None_val(v):
 #  DB related  (2nd)
 #############################
 class DBConn(object):
-    def __init__(self, db_file=CFG["DB_META_DATA"]):
+    def __init__(self, db_file=CFG["META_DB_URL"]):
         self.conn = sqlite3.connect(db_file)
 
     def __enter__(self):
@@ -129,7 +132,7 @@ class DBConn(object):
 class DBUtils():
     """SQLite database query utility """
 
-    def get_db_connection(self, file_db=CFG["DB_META_DATA"]):
+    def get_db_connection(self, file_db=CFG["META_DB_URL"]):
         if not file_db.exists():
             raise(f"DB file not found: {file_db}")
         return sqlite3.connect(file_db)
@@ -237,7 +240,7 @@ def list_datasets(db_type="SQLite"):
     sufix = db_type.lower()
     datasets = {}
     cwd = os.getcwd()
-    for p in [i for i in glob(f"db/**/*.{sufix}*", recursive=True) if "data_copilot" not in i and sufix in i.lower()]:
+    for p in [i for i in glob(f"db/**/*.{sufix}*", recursive=True) if META_DB_NAME not in i and sufix in i.lower()]:
         db_url = os.path.abspath(os.path.join(cwd, p))
         l = Path(db_url).parts
         db_name = l[l.index("db")+1]
@@ -467,7 +470,7 @@ def db_current_cfg(id_config=""):
         """
     # print(sql_stmt)
 
-    with DBConn(CFG["DB_META_DATA"]) as _conn:
+    with DBConn(CFG["META_DB_URL"]) as _conn:
         df = pd.read_sql(sql_stmt, _conn)
     if df is None or df.empty:
         # st.error("Config is missing")
