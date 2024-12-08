@@ -9,6 +9,7 @@ from datetime import datetime
 from io import StringIO 
 import os
 import re
+import shutil
 from glob import glob
 from traceback import format_exc
 from pathlib import Path
@@ -98,6 +99,14 @@ CFG = {
     "NOTE_TYPE": [BLANK_STR_VALUE, "RESOURCE", "JOURNAL", "IDEA", "PROJECT", "TASK","APP",],
     "STATUS_CODE": [BLANK_STR_VALUE, "ToDo","WIP", "Blocked", "Complete", "De-Scoped", "Others"],
 
+    "DEFAULT_CFG" : {
+        "vector_db": "chromadb",
+        "llm_vendor": "OpenAI",
+        "llm_model": "gpt-3.5-turbo",
+        "db_type": "SQLite",
+        "db_name": "chinook",
+        "db_url": Path(__file__).parent / "db/chinook/chinook.sqlite3",
+    },
 }
 
 

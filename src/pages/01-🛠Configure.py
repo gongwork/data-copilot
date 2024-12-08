@@ -115,51 +115,48 @@ def db_get_cfg_data(LIMIT=20):
         return pd.read_sql(sql_stmt, _conn)
 
 def do_config():
-    db_type = "SQLite"
-    avail_dbs = list_datasets(db_type)
-    # st.write(avail_dbs)
-    try:
-        cfg_data = db_current_cfg()
-    except Exception as e:
-        print(str(e))
-    if not cfg_data:
-        db_name = "chinook"
-        db_info = avail_dbs.get(db_name, {})
-        if not db_info:
-            st.error(f"Missing dataset {db_name}")
-            return 
-        
-        cfg_data = {
-            "vector_db": "chromadb",
-            "llm_vendor": "Alibaba",
-            "llm_model": "qwen2.5-coder:latest",
-            "db_type": db_info.get("db_type"),
-            "db_name": db_name,
-            "db_url": db_info.get("db_url"),
-        }
 
-    # st.write(cfg_data)
     st.markdown(f"""
     ##### Data Base
 
     """, unsafe_allow_html=True)
     
     with st.expander("Specify data source: (default - SQLite)", expanded=True):
-        db_list = sorted(SQL_DIALECTS)
+
+        cfg_data = {}
+        try:
+            cfg_data = db_current_cfg()
+        except Exception as e:
+            st.error(str(e))
+
+        if not cfg_data:
+            cfg_data = CFG["DEFAULT_CFG"]
+
+        db_dialects = sorted(SQL_DIALECTS)
         c1, c2, c3 = st.columns([2,2,6])
         with c1:
+            db_type = st.selectbox(
+                "SQL DB Type",
+                options=db_dialects,
+                index=db_dialects.index(cfg_data.get("db_type")),
+                key="cfg_db_type_select"
+            )
+            if db_type != "SQLite":
+                st.error(f"Unsupported DB Type: {db_type}")
+                return
+
+            avail_dbs = list_datasets(db_type)
+            if not avail_dbs:
+                st.error("No dataset found, please import first")
+                return
+
+        with c2:
+            db_names = sorted(list(avail_dbs.keys()))
             db_name = st.selectbox(
                 "DB Name",
-                options=(list(avail_dbs.keys()) + ["New DB"]),
-                index=list(avail_dbs.keys()).index(cfg_data.get("db_name")),
+                options=(db_names + ["New DB"]),
+                index=db_names.index(cfg_data.get("db_name")),
                 key="cfg_db_name_select"
-            )
-        with c2:
-            db_type = st.selectbox(
-                "DB Type",
-                options=db_list,
-                index=db_list.index(cfg_data.get("db_type")),
-                key="cfg_db_type_select"
             )
         with c3:
             if db_name == "New DB":
@@ -222,12 +219,6 @@ def do_config():
             options=vector_db_list,
             index=vector_db_list.index(cfg_data.get("vector_db"))
         )
-
-        # # st.info(Path.cwd())
-        # refresh_vector_db = st.button("Refresh Vector Store")
-        # if refresh_vector_db and vector_db == "chromadb":
-        #     Path("./chroma.sqlite3").unlink(missing_ok=True)
-
 
     st.markdown(f"""
     ##### GenAI Model

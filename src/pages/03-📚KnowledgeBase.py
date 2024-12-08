@@ -13,7 +13,29 @@ def do_knowledgebase():
     
     vn = setup_vanna_cached(cfg_data)
 
-    with st.expander("Add Schema", expanded=True):
+    with st.expander("Manage Knowledge", expanded=True):
+        c_1, c_2, c_3 = st.columns([4,1,3])
+        df = None
+        with c_1:
+            if st.button("Show"):
+                df = vn.get_training_data(dataset=DB_NAME)
+
+        with c_3:
+            collection_id = st.text_input("Enter collection ID", value="", key="del_collection")
+            btn_rm_id = st.button("Remove")
+            if btn_rm_id and collection_id:
+                vn.remove_training_data(id=collection_id)
+
+        with c_2:
+            btn_rm_all = st.button("Remove All")
+            if btn_rm_all:
+                for c in ["sql", "ddl", "documentation"]:
+                    vn.remove_collection(c, dataset=DB_NAME)
+
+        if df is not None and not df.empty:
+            st.dataframe(df)
+
+    with st.expander("Add Schema", expanded=False):
         c1, c2 = st.columns([2,2])
         with c1:
             btn_add_all_ddl = st.button("Add All DDL scripts")
@@ -46,19 +68,6 @@ def do_knowledgebase():
                 # st.write(result)
 
 
-    with st.expander("Add Question/SQL Pair", expanded=False):
-        q_sample, sql_sample = "Get book counts", "select count(*) from t_book;"
-        c3, c4 = st.columns([3,5])
-        with c3:
-            q_text = st.text_input("Question", value="", key="add_sql_q"
-                            ,placeholder=q_sample)
-        with c4:
-            sql_text = st.text_area("SQL query", value="", height=100, key="add_sql"
-                            ,placeholder=sql_sample)
-        if st.button("Add", key="btn_add_question_sql") and sql_text and q_text:
-            result = vn.train(question=q_text, sql=sql_text, dataset=DB_NAME)
-            st.write(result)
-
     with st.expander("Add Documentation", expanded=False):
         doc_sample = """table "t_book" stores information on book title and author """
         doc_text = st.text_area("Documentation", value="", height=100, key="add_doc"
@@ -85,27 +94,20 @@ def do_knowledgebase():
             except Exception as e:
                 st.warning(str(e))
 
-    with st.expander("Manage Knowledge", expanded=False):
-        c_1, c_2, c_3 = st.columns([4,1,3])
-        df = None
-        with c_1:
-            if st.button("Show"):
-                df = vn.get_training_data(dataset=DB_NAME)
+    with st.expander("Add Question/SQL Pair", expanded=False):
+        q_sample, sql_sample = "Get book counts", "select count(*) from t_book;"
+        c3, c4 = st.columns([3,5])
+        with c3:
+            q_text = st.text_input("Question", value="", key="add_sql_q"
+                            ,placeholder=q_sample)
+        with c4:
+            sql_text = st.text_area("SQL query", value="", height=100, key="add_sql"
+                            ,placeholder=sql_sample)
+        if st.button("Add", key="btn_add_question_sql") and sql_text and q_text:
+            result = vn.train(question=q_text, sql=sql_text, dataset=DB_NAME)
+            st.write(result)
 
-        with c_3:
-            collection_id = st.text_input("Enter collection ID", value="", key="del_collection")
-            btn_rm_id = st.button("Remove")
-            if btn_rm_id and collection_id:
-                vn.remove_training_data(id=collection_id)
 
-        with c_2:
-            btn_rm_all = st.button("Remove All")
-            if btn_rm_all:
-                for c in ["sql", "ddl", "documentation"]:
-                    vn.remove_collection(c, dataset=DB_NAME)
-
-        if df is not None and not df.empty:
-            st.dataframe(df)
 
 ## sidebar Menu
 def do_sidebar():

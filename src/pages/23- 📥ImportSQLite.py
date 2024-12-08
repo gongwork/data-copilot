@@ -33,9 +33,52 @@ def preview_table(db_path, table_name):
         st.error(f"Error previewing table {table_name}: {str(e)}")
         return None
 
+def show_existing_db(key_pfx=""):
+    db_dialects = sorted(SQL_DIALECTS)
+    c1, c2, c3, c4 = st.columns([1,1,4,1])
+    with c1:
+        db_type = st.selectbox(
+            "SQL DB Type",
+            options=db_dialects,
+            index=db_dialects.index("SQLite"),
+            key=f"{key_pfx}_db_type_select"
+        )
+        if db_type != "SQLite":
+            st.error(f"Unsupported DB Type: {db_type}")
+            return
+
+        avail_dbs = list_datasets(db_type)
+        if not avail_dbs:
+            st.error("No dataset found, please import first")
+            return
+
+    with c2:
+        db_names = sorted(list(avail_dbs.keys()))
+        db_name = st.selectbox(
+            "DB Name",
+            options=(db_names),
+            index=0,
+            key=f"{key_pfx}_db_name_select"
+        )
+    with c3:
+        db_url = st.text_input(
+            "DB URL",
+            value=avail_dbs[db_name].get("db_url"),
+            key=f"{key_pfx}_db_url"
+        )
+    with c4:
+        btn_drop = st.button("Drop")
+        if btn_drop and db_type in ["SQLite", "DuckDB"] and db_name not in ["chinook"]:
+            # st.info(Path.cwd())
+            # Remove directory and all its contents
+            shutil.rmtree(Path.cwd() / f"db/{db_name}")
+
 def sqlite_import_tool():
     st.header("SQlite Import Tool 📥")
     DB_LOADED = False
+
+    st.subheader("Existing Dataset")
+    show_existing_db(key_pfx="sqlite")
 
     # Section 1: Upload SQLite
     st.subheader("1. Upload SQLite Database")

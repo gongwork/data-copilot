@@ -5,7 +5,7 @@ An streamlit app built for data professionals, powered by [vanna.ai](https://git
 By streamlining the data-to-insight life-cycle, Data Copilot is a game-changer tool for Self-Service Analytics. Built on cutting-edge GenAI models, it empowers data professionals to unlock insights from data faster than ever, therefore allows them to focus on deeper analysis and strategic decision-making.
 
 ## Overview
-![welcome](https://github.com/gongwork/data-copilot/blob/main/docs/p0-welcome.png)
+![welcome](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/00-data-copilot-arch-design.png)
 
 ## Features
 
@@ -16,31 +16,31 @@ By streamlining the data-to-insight life-cycle, Data Copilot is a game-changer t
 
 ### Configure
 Choose data source, vector store, LLM model
-![configure](https://github.com/gongwork/data-copilot/blob/main/docs/p1-config.png)
+![configure](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/p1-config.png)
 
 
 ### Database
 Review database schema, data
-![database](https://github.com/gongwork/data-copilot/blob/main/docs/p2-database.png)
+![database](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/p2-database.png)
 
 
 ### Knowledge Base
 Define knowledge base with table schema and documentation
-![knowledgebase](https://github.com/gongwork/data-copilot/blob/main/docs/p3-knowledgebase.png)
+![knowledgebase](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/p3-knowledgebase.png)
 
 ### Ask AI
 Ask question on data (built on RAG), get answer in SQL, dataframe, python, plotly chart
-![rag1](https://github.com/gongwork/data-copilot/blob/main/docs/p4-rag-1.png)
+![rag1](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/p4-rag-1.png)
 
-![rag2](https://github.com/gongwork/data-copilot/blob/main/docs/p4-rag-2.png)
+![rag2](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/p4-rag-2.png)
 
 ### Results
 Question & answer pairs are saved to database
-![results](https://github.com/gongwork/data-copilot/blob/main/docs/p5-results.png)
+![results](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/p5-results.png)
 
 ### Import Tools
 Import data from CSV or connect to database
-![import](https://github.com/gongwork/data-copilot/blob/main/docs/p9-import-sqlite.png)
+![import](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/p9-import-sqlite.png)
 
 ### Demo Video
 
@@ -71,7 +71,7 @@ open browser at URL: http://localhost:8501
     - import it into table `bus_term`
     - see [bus_term.csv](https://github.com/wgong/py4kids/blob/master/lesson-18-ai/vanna/note_book/data/company_rank/bus_term.csv) for example
 
-- [Extra-1](https://github.com/gongwork/data-copilot/blob/main/docs/README-extra-1.md)
+- [Extra-1](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/README-extra-1.md)
 
 
 

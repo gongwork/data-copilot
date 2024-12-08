@@ -46,12 +46,13 @@ def do_database():
         return    
 
     avail_dbs = list_datasets(db_type)
+    db_names = sorted(list(avail_dbs.keys()))
     c1, c2, c3  = st.columns([2,2,4])
     with c1:
         db_name = st.selectbox(
             "DB Name",
-            options=(list(avail_dbs.keys()) + [META_DB_NAME]),
-            index=list(avail_dbs.keys()).index(DB_NAME),
+            options=(db_names + [META_DB_NAME]),
+            index=db_names.index(DB_NAME),
             key="select_db_name"
         )
         db_url = CFG["META_DB_URL"] if db_name == META_DB_NAME else avail_dbs[db_name].get("db_url")
@@ -84,7 +85,7 @@ def do_database():
     if st.button("Execute Query ..."):
         try:
             _execute_code_sql(code=sql_stmt, db_url=db_url)
-            st.success(f"Successful with running:\n {sql_stmt}")
+            st.success(f"Success!")
         except:
             st.error(format_exc())
 
