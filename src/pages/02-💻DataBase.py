@@ -91,6 +91,9 @@ def do_database():
 
 
     if db_name == "chinook":
+        st.markdown(f"""
+[Music Store](https://www.sqlitetutorial.net/sqlite-sample-database/)
+""", unsafe_allow_html=True)
         st.image("https://github.com/gongwork/data-copilot/blob/main/docs/sqlite-sample-database-chinook.jpg?raw=true")
 
 
