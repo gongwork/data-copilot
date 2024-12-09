@@ -10,10 +10,12 @@ KEY_PREFIX = f"col_{TABLE_NAME}"
 def main():
     # if "previous_row" not in st.session_state:
     #     st.session_state.previous_row = None
-
+    df = None 
     selected_cols = [ "question", "sql_generated", "py_generated", "fig_generated", "is_rag", "sql_is_valid", "id", "id_config"]
+
     search_question = st.text_input("🔍Search question:", key=f"{KEY_PREFIX}_search_question").strip()
     where_clause = f" question like '%{search_question}%'" if search_question else " 1=1 "
+
 
     DB_URL = CFG["META_DB_URL"]
     with DBConn(DB_URL) as _conn:
@@ -38,6 +40,15 @@ def main():
 
     selected_rows = grid_resp['selected_rows']
     if selected_rows is None or len(selected_rows) < 1:
+
+        if df is not None:
+            st.download_button(
+                label="Download CSV",
+                data=df_to_csv(df, index=False),
+                file_name=f"qa_history-{get_ts_now()}.csv",
+                mime='text/csv',
+            )
+
         return
 
     row = selected_rows.iloc[0].to_dict() if isinstance(selected_rows, pd.DataFrame) else selected_rows[0]
@@ -118,6 +129,8 @@ def main():
             st.text_input('db_type', value=cfg_db_type, disabled=True, key=f"{KEY_PREFIX}_db_type")
         with c1_3:
             st.text_input('db_url', value=cfg_db_url, disabled=True, key=f"{KEY_PREFIX}_db_url")
+
+
 
 if __name__ == '__main__':
     main()

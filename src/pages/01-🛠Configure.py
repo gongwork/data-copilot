@@ -251,8 +251,15 @@ def do_config():
         db_upsert_cfg(cfg_data)
 
     with st.expander("Show Config Data:", expanded=False):
-        data = db_get_cfg_data()
-        st.dataframe(data)
+        df = db_get_cfg_data()
+        st.dataframe(df)
+        if df is not None and not df.empty:
+            st.download_button(
+                label="Download CSV",
+                data=df_to_csv(df, index=False),
+                file_name=f"settings-{get_ts_now()}.csv",
+                mime='text/csv',
+            )
 
 ## sidebar Menu
 def do_sidebar():

@@ -96,7 +96,7 @@ CFG = {
     "TABLE_NOTE" : "t_note",            # User Notes
     "TABLE_CONFIG" : "t_config",        # Setting
 
-    "NOTE_TYPE": [BLANK_STR_VALUE, "RESOURCE", "JOURNAL", "IDEA", "PROJECT", "TASK","APP",],
+    "NOTE_TYPE": [BLANK_STR_VALUE, 'learning', 'research', 'project', 'journal'],
     "STATUS_CODE": [BLANK_STR_VALUE, "ToDo","WIP", "Blocked", "Complete", "De-Scoped", "Others"],
 
     "DEFAULT_CFG" : {
@@ -117,7 +117,6 @@ TRI_STATES = ["Y", BLANK_STR_VALUE, None,]
 SELECTBOX_OPTIONS = {
     "is_active": BI_STATES,
     "note_type": CFG["NOTE_TYPE"],
-
 }
 
 
@@ -331,7 +330,7 @@ def db_select_by_id(table_name, id_value=""):
         return pd.read_sql(sql_stmt, _conn).fillna("").to_dict('records')
 
 
-def db_upsert(data, user_key_cols="title", call_meta_func=False):
+def db_upsert(data, user_key_cols="note_name", call_meta_func=False):
     """ 
     """
     # print(f"data = {data}")
@@ -391,6 +390,11 @@ def db_upsert(data, user_key_cols="title", call_meta_func=False):
         if "id" not in col_clause:
             col_clause.append("id")
             col_val = get_uuid()
+            val_clause.append(f"'{col_val}'")
+
+        if "email" not in col_clause:
+            col_clause.append("email")
+            col_val = DEFAULT_EMAIL
             val_clause.append(f"'{col_val}'")
 
         upsert_sql = f"""
@@ -915,7 +919,10 @@ def ui_layout_form(selected_row, table_name):
     for col in visible_columns:
         old_row[col] = selected_row.get(col, "") if selected_row is not None else ""
 
-    data = {"table_name": table_name}
+    data = {
+        "table_name": table_name,
+        "email": selected_row.get("email", DEFAULT_EMAIL) if selected_row else DEFAULT_EMAIL,
+    }
 
     # copy id if present
     id_val = old_row.get("id", "")

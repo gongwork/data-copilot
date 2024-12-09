@@ -10,16 +10,15 @@ DB_URL = cfg_data.get("db_url")
 # st.write(DB_NAME, DB_URL)
 
 def do_knowledgebase():
+    df = None
     
     vn = setup_vanna_cached(cfg_data)
 
     with st.expander("Manage Knowledge", expanded=True):
-        c_1, c_2, c_3 = st.columns([4,1,3])
-        df = None
+        c_1, c_2, _, c_3 = st.columns([4,1,1,2])
         with c_1:
             if st.button("Show"):
                 df = vn.get_training_data(dataset=DB_NAME)
-
         with c_3:
             collection_id = st.text_input("Enter collection ID", value="", key="del_collection")
             btn_rm_id = st.button("Remove")
@@ -34,6 +33,12 @@ def do_knowledgebase():
 
         if df is not None and not df.empty:
             st.dataframe(df)
+            st.download_button(
+                label="Download CSV",
+                data=df_to_csv(df, index=False),
+                file_name=f"knowledgebase-{get_ts_now()}.csv",
+                mime='text/csv',
+            )
 
     with st.expander("Add Schema", expanded=False):
         c1, c2 = st.columns([2,2])

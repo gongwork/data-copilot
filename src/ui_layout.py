@@ -127,12 +127,24 @@ COLUMN_PROPS = {
         'widget_type': 'selectbox',
         'label_text': 'Active?'
     },
-   
+    'email': {
+        'is_system_col': False,
+        'is_user_key': False,
+        'is_required': True,
+        'is_visible': False,
+        'is_editable': False,
+        'is_clickable': False,
+        'datatype': 'text',
+        'form_column': 'COL_2-6',
+        'widget_type': 'text_input',
+        'label_text': 'UserID'
+    },
+
 }, 
 
 't_note': {
     # Col_1
-    'title': {
+    'note_name': {
         'is_system_col': False,
         'is_user_key': True,
         'is_required': True,
@@ -144,7 +156,7 @@ COLUMN_PROPS = {
         'widget_type': 'text_input',
         'label_text': 'Title'
     },
-    'link_url': {
+    'url': {
         'is_system_col': False,
         'is_user_key': False,
         'is_required': False,
@@ -182,7 +194,7 @@ COLUMN_PROPS = {
         'widget_type': 'text_input',
         'label_text': 'ID'
     },
-    'tags': {
+    'note_type': {
         'is_system_col': False,
         'is_user_key': False,
         'is_required': False,
@@ -191,6 +203,18 @@ COLUMN_PROPS = {
         'is_clickable': False,
         'datatype': 'text',
         'form_column': 'COL_2-2',
+        'widget_type': 'selectbox',
+        'label_text': 'Note Type'
+    },
+    'tags': {
+        'is_system_col': False,
+        'is_user_key': False,
+        'is_required': False,
+        'is_visible': True,
+        'is_editable': True,
+        'is_clickable': False,
+        'datatype': 'text',
+        'form_column': 'COL_2-3',
         'widget_type': 'text_input',
         'label_text': 'Tags'
     },
@@ -203,7 +227,7 @@ COLUMN_PROPS = {
         'is_editable': False,
         'is_clickable': False,
         'datatype': 'text',
-        'form_column': 'COL_2-3',
+        'form_column': 'COL_2-4',
         'widget_type': 'text_input',
         'label_text': 'Updated At'
     },
@@ -231,107 +255,19 @@ COLUMN_PROPS = {
         'widget_type': 'selectbox',
         'label_text': 'Active?'
     },
+    'email': {
+        'is_system_col': False,
+        'is_user_key': False,
+        'is_required': True,
+        'is_visible': False,
+        'is_editable': False,
+        'is_clickable': False,
+        'datatype': 'text',
+        'form_column': 'COL_2-6',
+        'widget_type': 'text_input',
+        'label_text': 'UserID'
+    },
    
 }, 
-
-'t_resource': {
-    'title': {
-        'is_system_col': False,
-        'is_user_key': False,
-        'is_required': False,
-        'is_visible': False,
-        'is_editable': False,
-        'is_clickable': False,
-        'datatype': 'text',
-        'form_column': 'COL_1-1',
-        'widget_type': 'text_input',
-        'label_text': 'Title'
-    },
-    'u_id': {
-        'is_system_col': False,
-        'is_user_key': False,
-        'is_required': False,
-        'is_visible': False,
-        'is_editable': False,
-        'is_clickable': False,
-        'datatype': 'text',
-        'form_column': 'COL_1-1',
-        'widget_type': 'text_input',
-        'label_text': 'U Id'
-    },
-    'media_type': {
-        'is_system_col': False,
-        'is_user_key': False,
-        'is_required': False,
-        'is_visible': False,
-        'is_editable': False,
-        'is_clickable': False,
-        'datatype': 'text',
-        'form_column': 'COL_1-1',
-        'widget_type': 'text_input',
-        'label_text': 'Media Type'
-    },
-    'desc_cn': {
-        'is_system_col': False,
-        'is_user_key': False,
-        'is_required': False,
-        'is_visible': False,
-        'is_editable': False,
-        'is_clickable': False,
-        'datatype': 'text',
-        'form_column': 'COL_1-1',
-        'widget_type': 'text_input',
-        'label_text': 'Desc Cn'
-    },
-    'desc_en': {
-        'is_system_col': False,
-        'is_user_key': False,
-        'is_required': False,
-        'is_visible': False,
-        'is_editable': False,
-        'is_clickable': False,
-        'datatype': 'text',
-        'form_column': 'COL_1-1',
-        'widget_type': 'text_input',
-        'label_text': 'Desc En'
-    },
-    'link_url': {
-        'is_system_col': False,
-        'is_user_key': False,
-        'is_required': False,
-        'is_visible': False,
-        'is_editable': False,
-        'is_clickable': False,
-        'datatype': 'text',
-        'form_column': 'COL_1-1',
-        'widget_type': 'text_input',
-        'label_text': 'Link Url'
-    },
-    'ts': {
-        'is_system_col': False,
-        'is_user_key': False,
-        'is_required': False,
-        'is_visible': False,
-        'is_editable': False,
-        'is_clickable': False,
-        'datatype': 'text',
-        'form_column': 'COL_1-1',
-        'widget_type': 'text_input',
-        'label_text': 'Ts'
-    },
-    'is_active': {
-        'is_system_col': False,
-        'is_user_key': False,
-        'is_required': False,
-        'is_visible': False,
-        'is_editable': False,
-        'is_clickable': False,
-        'datatype': 'text',
-        'form_column': 'COL_1-1',
-        'widget_type': 'selectbox',
-        'label_text': 'Active?'
-    }
-}
-
 
 }

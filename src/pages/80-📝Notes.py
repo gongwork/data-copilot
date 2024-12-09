@@ -28,7 +28,7 @@ def main():
             select 
                 note_name
                 , ifnull(note, '')  as note 
-                , ifnull(url, '')  as link_url 
+                , ifnull(url, '')  as url 
                 , tags
                 , ifnull(is_active, '')  as is_active
                 , ts
@@ -41,7 +41,7 @@ def main():
         df = pd.read_sql(sql_stmt, _conn)
 
     grid_resp = ui_display_df_grid(df, 
-                                   clickable_columns=["link_url"],
+                                   clickable_columns=["url"],
                                    selection_mode="single")
     selected_rows = grid_resp['selected_rows']
 
@@ -53,18 +53,15 @@ def main():
     # display form
     ui_layout_form(selected_row, TABLE_NAME)
 
-    # display download CSV button
     c_1, c_2 = st.columns([3,3])
     with c_1:
-        st.markdown(f"""
-            ##### Download CSV
-        """, unsafe_allow_html=True)
-        st.download_button(
-            label="Submit",
-            data=df_to_csv(df, index=False),
-            file_name=f"{TABLE_NAME}-{get_ts_now()}.csv",
-            mime='text/csv',
-        )
+        if df is not None and not df.empty:
+            st.download_button(
+                label="Download CSV",
+                data=df_to_csv(df, index=False),
+                file_name=f"notes-{get_ts_now()}.csv",
+                mime='text/csv',
+            )
     with c_2:
         tags_new = []
         for t in tags:
