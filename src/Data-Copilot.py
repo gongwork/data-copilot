@@ -67,7 +67,7 @@ render_header()
 
 st.markdown(f"""
 #### <span style="color: black;">Features</span>
-- **<span style="color: red;">ChatGPT</span>**: ask general question on <span style="color: blue;">LLM</span> models of choice 
+- **<span style="color: red;">ChatGPT</span>**: ask general question on <span style="color: blue;">Large-Language-Model </span> (LLM) of choice 
 - **<span style="color: red;">RAG</span>**: ask dataset-specific question via Retrieval Augmented Generation
     - **<span style="color: blue;">Semantic Search</span>**: discover data schema
     - **<span style="color: blue;">Text-to-SQL</span>**: generate SQL from plain text

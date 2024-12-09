@@ -66,13 +66,14 @@ see [kaggle](https://www.kaggle.com/datasets/patricklford/largest-companies-anal
 }
 
 
-def db_insert_qa_result(qa_data, DEBUG_FLAG=False):
+def db_insert_qa_result(qa_data, DEBUG_FLAG=True):
     """Insert Q&A results to DB 
     """
     if not qa_data: return
 
     id_config = qa_data.get("id_config")
     my_question = qa_data.get("my_question")
+    is_rag = qa_data.get("is_rag")
     question = escape_single_quote(my_question)
     answer = qa_data.get("my_answer")
 
@@ -123,6 +124,7 @@ def db_insert_qa_result(qa_data, DEBUG_FLAG=False):
             id,
             id_config,
             question,
+            is_rag,
             sql_generated,
             sql_ts_delta,
             sql_is_valid,
@@ -139,6 +141,7 @@ def db_insert_qa_result(qa_data, DEBUG_FLAG=False):
             '{id}',
             '{id_config}',
             '{question}',
+            {is_rag},
             '{sql_generated}',
             '{sql_ts_delta}',
             '{sql_is_valid}',
@@ -305,15 +308,17 @@ def ask_ai():
 
     if not my_question: return 
 
-    if st.session_state.get("config_disable_rag", False):
-        my_answer = ask_llm_direct(my_question)
-    else:
+    is_rag = 0 if st.session_state.get("config_disable_rag", False) else 1
+    if is_rag:
         my_answer = ask_rag(my_question)
+    else:
+        my_answer = ask_llm_direct(my_question)
 
     qa_data = {
         "id_config": cfg_data.get("id"),
         "my_question": my_question,
         "my_answer": my_answer,
+        "is_rag": is_rag,
     }
     if st.session_state.get("debug_ask_ai", False):
         st.write(qa_data)

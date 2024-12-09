@@ -11,7 +11,7 @@ def main():
     # if "previous_row" not in st.session_state:
     #     st.session_state.previous_row = None
 
-    selected_cols = [ "question", "sql_generated", "sql_is_valid", "py_generated", "fig_generated", "id", "id_config"]
+    selected_cols = [ "question", "sql_generated", "py_generated", "fig_generated", "is_rag", "sql_is_valid", "id", "id_config"]
     search_question = st.text_input("🔍Search question:", key=f"{KEY_PREFIX}_search_question").strip()
     where_clause = f" question like '%{search_question}%'" if search_question else " 1=1 "
 
@@ -49,6 +49,7 @@ def main():
     row_id = row.get("id") if row else ""
     row_id_config = row.get("id_config") if row else ""
     row_question = row.get("question") if row else ""
+    row_is_rag = row.get("is_rag") if row else 1
     row_sql_generated = row.get("sql_generated") if row else ""
     row_sql_is_valid = row.get("sql_is_valid", "N") if row else "N"
     row_py_generated = row.get("py_generated") if row else ""
@@ -62,8 +63,12 @@ def main():
     cfg_llm_vendor = cfg_data.get("llm_vendor") if cfg_data else ""
     cfg_llm_model = cfg_data.get("llm_model") if cfg_data else ""
 
-    st.text_input("Question", value=row_question, disabled=True, key=f"{KEY_PREFIX}_question")
-
+    c1, _, c2 = st.columns([8,1,2])
+    with c1:
+        st.text_area("Question", value=row_question, height=50, disabled=False, key=f"{KEY_PREFIX}_question")
+    with c2:
+        st.checkbox("Use RAG?", value=(row_is_rag==1), key="{KEY_PREFIX}_is_rag")
+        st.checkbox("Valid SQL?", value=(row_sql_is_valid=="Y"), key="{KEY_PREFIX}_valid_sql")
     c_left, c_right = st.columns([4,6])
 
     if row_sql_is_valid != "Y":

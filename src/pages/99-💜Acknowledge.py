@@ -10,11 +10,13 @@ st.image("https://github.com/gongwork/data-copilot/blob/main/docs/thank-you.png?
 st.markdown(f"""
 ##### <span style="color: red;">To our audience and the open-source community that makes it all possible</span>
 - [Vanna.ai](https://github.com/vanna-ai) - Chat with your SQL data
-- [Streamlit](https://streamlit.io/) - Build data apps faster !
 - [RAG](https://aws.amazon.com/what-is/retrieval-augmented-generation/) - How does Retrieval Augmented Generation actually work ?
-- [Ollama](https://ollama.com/) - Your AI companion: no cloud strings attached !
+- [Hugging Face](https://huggingface.co/) - Open community builds stronger AI models together
+- [Chroma](https://docs.trychroma.com/) - Make vector-search simpler and smarter
+- [Streamlit](https://streamlit.io/) - Build data apps faster !
+- [Ollama](https://ollama.com/) - Your AI companion: no cloud-strings attached !
 - [SQLite](https://www.sqlite.org/) - Small, fast, self-contained, highly-reliable, full-featured, SQL database engine
-- [GitHub](https://github.com/gongwork/data-copilot) - Source code at your service.
+- [GitHub](https://github.com/gongwork/data-copilot) - Source codes at your service.
 
 """, unsafe_allow_html=True)
 

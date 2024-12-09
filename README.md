@@ -9,10 +9,13 @@ By streamlining the data-to-insight life-cycle, Data Copilot is a game-changer t
 
 ## Features
 
-- **Semantic Search**: discover data schema
-- **Text-to-SQL**: generate SQL from plain text
-- **Data-to-Plot**: generate Python code to visualize data
-- **Data Privacy**: achievable by using Ollama and open-source LLM models locally
+- **<span style="color: red;">ChatGPT</span>**: ask general question on <span style="color: blue;">LLM</span> models of choice 
+- **<span style="color: red;">RAG</span>**: ask dataset-specific question via Retrieval Augmented Generation
+    - **<span style="color: blue;">Semantic Search</span>**: discover data schema
+    - **<span style="color: blue;">Text-to-SQL</span>**: generate SQL from plain text
+    - **<span style="color: blue;">Data-to-Plot</span>**: generate Python code to visualize data 
+- **<span style="color: red;">Data Privacy</span>** (__optional__) : leverage  <span style="color: blue;">Ollama</span> and open-source LLM models locally 
+
 
 ### Configure
 Choose data source, vector store, LLM model

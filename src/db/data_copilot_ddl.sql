@@ -51,7 +51,7 @@ CREATE TABLE if not exists t_qa
 
     , question text NOT NULL
 	, question_hash text
-
+	, is_rag INTEGER DEFAULT 1
 	, sql_generated text
 	, sql_ts_delta float
 	, sql_revised text
