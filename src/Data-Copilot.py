@@ -29,8 +29,7 @@ def render_header():
             </td>
             <td style="vertical-align: top; padding: 1rem; line-height: 1.5; border: none;">
                 <!-- Text -->
-                By streamlining the data-to-insight life-cycle, <strong><span style="color: red;">Data Copilot</span></strong> is a game-changer tool for Self-Service Analytics. 
-                Built on cutting-edge GenAI, it empowers data professionals to unlock insights from data faster than ever, therefore allows them to focus on deeper analysis and strategic decision-making.
+                Powered by GenAI, <strong><span style="color: red;">Data Copilot</span></strong> is an interpreter between Analyst and Data, which "speaks" both natural language (like English) and data language (such as SQL and Python). Analysts can talk to data and derive insight faster than ever. With gained productivity, analysts can focus on deeper analysis and strategic decision-making.
             </td>
         </tr>
     </table>
@@ -66,18 +65,23 @@ st.markdown(f"""
 render_header()
 
 st.markdown(f"""
-#### <span style="color: black;">Features</span>
-- **<span style="color: red;">ChatGPT</span>**: ask general question on <span style="color: blue;">Large-Language-Model </span> (LLM) of choice 
-- **<span style="color: red;">RAG</span>**: ask dataset-specific question via Retrieval Augmented Generation
-    - **<span style="color: blue;">Semantic Search</span>**: discover data schema
-    - **<span style="color: blue;">Text-to-SQL</span>**: generate SQL from plain text
-    - **<span style="color: blue;">Data-to-Plot</span>**: generate Python code to visualize data 
-- **<span style="color: red;">Data Privacy</span>** (__optional__) : leverage  <span style="color: blue;">Ollama</span> and open-source LLM models locally 
-               
 #### <span style="color: black;">Architecture </span>
 """, unsafe_allow_html=True)
 
 st.image("https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/00-data-copilot-arch-design.png")
+
+st.markdown(f"""
+#### <span style="color: black;">Features</span>
+- **<span style="color: red;">RAG</span>**: ask dataset-specific question via Retrieval Augmented Generation
+    - **<span style="color: blue;">Semantic Search</span>**: discover data schema
+    - **<span style="color: blue;">Text-to-SQL</span>**: generate SQL from plain text
+    - **<span style="color: blue;">Data-to-Plot</span>**: generate Python code to visualize data 
+- **<span style="color: red;">ChatGPT</span>**: ask general question on <span style="color: blue;">Large-Language-Model </span> (LLM) of choice 
+- **<span style="color: red;">Data Privacy</span>** (__optional__) : leverage  <span style="color: blue;">Ollama</span> and open-source LLM models locally 
+- **<span style="color: red;">Note-Taking</span>**:
+- **<span style="color: red;">Knowledge-Sharing</span>**:
+""", unsafe_allow_html=True)
+
 
 
 # st.markdown(f"""
