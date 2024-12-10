@@ -32,6 +32,16 @@ https://github.com/build-on-aws/amazon-bedrock-quick-start
 
 ## Feature Roadmap
 
+- create `db/data_copilot_db_dict.pkl` to store dataset config
+    - db_type
+        - db_dialect
+            - db_name
+                - db_instance
+                - db_url
+                - db_port
+                - db_username
+                - db_password (encrypted)
+
 - add auth (register/login) 
     - see `habits7`
 

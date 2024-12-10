@@ -20,10 +20,11 @@ def do_knowledgebase():
             if st.button("Show"):
                 df = vn.get_training_data(dataset=DB_NAME)
         with c_3:
-            collection_id = st.text_input("Enter collection ID", value="", key="del_collection")
+            doc_ids = st.text_input("Enter vector ID(s)", value="", key="del_collection")
             btn_rm_id = st.button("Remove")
-            if btn_rm_id and collection_id:
-                vn.remove_training_data(id=collection_id)
+            if btn_rm_id and doc_ids:
+                for doc_id in parse_id_list(doc_ids):
+                    vn.remove_training_data(id=doc_id)
 
         with c_2:
             btn_rm_all = st.button("Remove All")

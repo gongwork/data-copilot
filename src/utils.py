@@ -1249,6 +1249,12 @@ def convert_csvs_to_excel(input_dir, output, trim_prefix):
         click.echo(f"Error: {str(e)}", err=True)
         raise click.Abort()
 
+def parse_id_list(ids):
+    """split list of ID string into list
+    """
+    x = ids.replace(",", " ").replace(";", " ")
+    return [i.strip() for i in x.split() if i.strip()]
+
 if __name__ == "__main__":
     # pass
     convert_csvs_to_excel()

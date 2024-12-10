@@ -141,21 +141,25 @@ def do_config():
                 index=db_dialects.index(cfg_data.get("db_type")),
                 key="cfg_db_type_select"
             )
-            if db_type != "SQLite":
-                st.error(f"Unsupported DB Type: {db_type}")
-                return
+            # if db_type != "SQLite":
+            #     st.error(f"Unsupported DB Type: {db_type}")
+            #     return
 
-            avail_dbs = list_datasets(db_type)
-            if not avail_dbs:
-                st.error("No dataset found, please import first")
-                return
+            if db_type in ["SQLite"]:
+                avail_dbs = list_datasets(db_type)
+                db_names = sorted(list(avail_dbs.keys()))
+            else:
+                db_names = ["New DB"]
 
         with c2:
-            db_names = sorted(list(avail_dbs.keys()))
+            if cfg_data.get("db_name") in db_names:
+                idx = db_names.index(cfg_data.get("db_name"))
+            else:
+                idx = 0
             db_name = st.selectbox(
                 "DB Name",
-                options=(db_names + ["New DB"]),
-                index=db_names.index(cfg_data.get("db_name")),
+                options=db_names,
+                index=idx,
                 key="cfg_db_name_select"
             )
         with c3:
@@ -170,31 +174,37 @@ def do_config():
                 key="cfg_db_url"
             )
         if db_name == "New DB":
-            c_1, c_2, c_3, c_4, _, c_5 = st.columns([3,3,3,3,1,2])
-            with c_1:
-                db_instance = st.text_input(
-                    "DB Instance", 
-                    value="", 
-                    key="cfg_db_instance"
+            c_name, c_user, c_pwd, c_inst, c_port, c_5 = st.columns([3,3,3,3,3,2])
+            with c_name:
+                db_name_new = st.text_input(
+                    "DB Name (New)",
+                    value="",
+                    key="cfg_db_name_new"
                 )
-            with c_2:
+            with c_user:
                 db_username = st.text_input(
                     "DB Username", 
                     value="", 
                     key="cfg_db_username"
                 )
-            with c_3:
+            with c_pwd:
                 db_password = st.text_input(
                     "DB Password", 
                     value="", 
                     type="password", 
                     key="cfg_db_password"
                 )
-            with c_4:
-                db_name_new = st.text_input(
-                    "DB Name (New)",
-                    value="",
-                    key="cfg_db_name_new"
+            with c_inst:
+                db_instance = st.text_input(
+                    "DB Instance", 
+                    value="", 
+                    key="cfg_db_instance"
+                )
+            with c_port:
+                db_port = st.text_input(
+                    "DB port", 
+                    value="", 
+                    key="cfg_db_port"
                 )
 
             with c_5:

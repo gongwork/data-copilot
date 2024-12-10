@@ -34,6 +34,8 @@ LLM_MODEL_MAP = {
     "OpenAI GPT 4o mini": 'gpt-4o-mini',
     "OpenAI GPT 4": 'gpt-4',
     "Google Gemini 1.5 Pro": 'gemini-1.5-pro',
+    "Google Gemini Exp 1206": 'gemini-exp-1206',
+    "Google Gemini Exp 1121": 'gemini-exp-1121',
     "AWS Bedrock Claude 3 Sonnet": 'claude-3-sonnet-20240229-v1:0', 
     "Alibaba QWen 2.5 Coder (Open)": 'qwen2.5-coder:latest',
     "Alibaba QWen 2.5 Coder 1.5B (Open)": 'qwen2.5-coder:1.5b',

@@ -17,7 +17,10 @@ st.markdown(f"""
 - [Ollama](https://ollama.com/) - Your AI companion: no cloud-strings attached !
 - [SQLite](https://www.sqlite.org/) - Small, fast, self-contained, highly-reliable, full-featured, SQL database engine
 - [GitHub](https://github.com/gongwork/data-copilot) - Source codes at your service.
+- [Chatbot Arena LLM Leaderboard](https://lmarena.ai/?leaderboard) - Community-driven Evaluation for Best LLM and AI chatbots
 
+
+            
 """, unsafe_allow_html=True)
 
 # - [SQL Assistant](https://medium.com/@romina.elena.mendez/sql-assistant-text-to-sql-application-in-streamlit-b54f65d06b97)
