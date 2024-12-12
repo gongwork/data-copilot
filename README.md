@@ -4,7 +4,7 @@ An streamlit app built for data professionals, powered by [vanna.ai](https://git
 
 By streamlining the data-to-insight life-cycle, Data Copilot is a game-changer tool for Self-Service Analytics. Built on cutting-edge GenAI models, it empowers data professionals to unlock insights from data faster than ever, therefore allows them to focus on deeper analysis and strategic decision-making.
 
-[Data-Copilot Demo](https://www.youtube.com/watch?v=Xwf8UI5gM5k)
+[Data-Copilot Demo Video](https://www.youtube.com/watch?v=Xwf8UI5gM5k)
 
 ## Overview
 ![welcome](https://raw.githubusercontent.com/gongwork/data-copilot/refs/heads/main/docs/00-data-copilot-arch-design.png)
