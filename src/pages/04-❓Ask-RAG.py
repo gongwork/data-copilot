@@ -27,13 +27,32 @@ sample_questions = {
 "chinook" : f"""
 #### Sample prompts for "Chinook" dataset
 - List all the tables
-- What tables store order information? Hint: table_name is stored in column called "name" from table called sqlite_master
+- List all the tables , ignore tables starting with "sqlite_"
+- How many customers are there
+- What tables store customer order information? 
 - Find top 5 customers by sales
+- what are the top 5 countries that customers come from
 - List all customers from Canada and their email addresses
 - Find the top 5 most expensive tracks (based on unit price)
 - Identify artists who have albums with tracks appearing in multiple genres (Hint: join artists and albums tables on ArtistId column)
 - Count number of customers by country
-
+- List all albums and their corresponding artist names
+- Find all tracks with a name containing "What" (case-insensitive)
+- Get the total number of invoices for each customer
+- Find the total number of invoices per country
+- List top 5 invoices with a total exceeding $10
+- Find top 10 invoices with the larges total amount since 2010 
+- List all employees and their reporting manager's name (if any)
+- Show the top 10 customers from United States by the average invoice total
+- Find the top 5 most expensive tracks (based on unit price)
+- List top 10 genres and the number of tracks in each genre
+- Get all genres that do not have any tracks associated with them
+- There are 3 tables: artists, albums and tracks, where albums and artists are linked by ArtistId, albums, Can you find the top 10 most popular artists based on the number of tracks
+- Find top 10 customer with the most invoices
+- Find top 5 customer who bought the most albums in total quantity (across all invoices).  Hint: album quantity is found in invoice_items,
+- Find the top 5 customers who spent the most money overall (Hint: order total can be found on invoices table, calculation using invoice_items detail table is unnecessary)
+- Get all playlists containing at least 10 tracks and the total duration of those tracks
+- Identify top 10 artists who have albums with tracks appearing in multiple genres:
 
 see [text-to-SQL questions](https://github.com/wgong/py4kids/blob/master/lesson-18-ai/vanna/note_book/gongai/test-2/ollama-llama3-chromadb-sqlite-test-2.ipynb)
 """,
